@@ -6,9 +6,12 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 --*/
 body{
 	margin:0px auto;
-	font-family: 'Roboto Condensed', sans-serif; 
+	font-family: 'Playfair Display', serif;
 	background: #fff;  
 	min-height: 100vh;
+}
+drop{
+	padding-left: 40px;
 }
 body a{
 	transition: 0.5s all;
@@ -33,7 +36,9 @@ ul,label{
 body a:hover,body a:focus{
 	text-decoration:none;
 	outline: none;
+	font-family: 'Playfair Display', serif;
 } 
+
 /*-- banner --*/  
 .banner{ 
 	/* background:url(../images/1.jpg)no-repeat center center; */
@@ -47,14 +52,14 @@ body a:hover,body a:focus{
 	  padding: 25px;
 	  background:url(../images/1.jpg);
 	  background-repeat: no-repeat;
-	  background-size: auto;
+	  background-size: cover;
 } 
 .header {
     padding-top:2.5em;
 }
 .header .container { 
     position: relative;
-	margin-bottom: 25px;
+	margin-bottom: 10px;
 }
 .menu, .social-w3licon {
     margin-top: 1em;
@@ -306,7 +311,7 @@ body a:hover,body a:focus{
 	padding:0;
 }
 p { 
-    color: #999; 
+    color: #aaaaaa; 
     font-size: 1em;
     letter-spacing: 0.5px; 
 	line-height: 1.8em;
@@ -732,6 +737,8 @@ p.about-w3text {
 /*-- footer --*/
 .footer{
 	background:#212121;
+	position:sticky;
+	top:100%;
 }
 .agileinfo_footer_grid h3.agileits-title {
 	font-size: 2em;
@@ -1179,8 +1186,11 @@ section#tables  p {
 }
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
 	font-size: 0.9em;
-	color: #999;
+	color: #3d3d3d;
 	border-top: none !important;
+}
+.table tr:hover{
+	background-color: #eeeeee;
 }
 .tab-content > .active {
 	display: block;

@@ -1,0 +1,13 @@
+h2{
+	font-family:sans-sherif;
+	font-size: 1.5em;
+	text-transform:uppercase;
+	
+}
+strong{
+	font-weight: 700;
+	background-color:yellow;
+}
+p{
+	font-family: sans-sherif;
+}
