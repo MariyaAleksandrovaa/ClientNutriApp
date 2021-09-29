@@ -2,6 +2,7 @@ package app.controller;
 
 import java.math.BigDecimal;
 
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -18,19 +19,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import app.Application;
 import app.model.ComponentsDishTable;
-import app.model.Empresa;
 import app.model.Menu;
 import app.objects.GroupUnitObj;
 import app.objects.MenuObj;
 import app.objects.AlergensFood;
 import app.objects.ComponentsFood;
+import app.objects.DateObj;
 import app.repository.MenuRepository;
 
 @Controller
@@ -71,7 +71,18 @@ public class ControllerMVC {
 	}
 
 	@RequestMapping(value = { "/client/{id_local}" }, method = RequestMethod.GET)
-	public ModelAndView viewMenuPage(HttpServletRequest request, HttpSession session, @PathVariable("id_local") int id_local) {
+	public ModelAndView selectDateMenu(HttpServletRequest request, HttpSession session, @PathVariable("id_local") int id_local) {
+		ModelAndView model = new ModelAndView("escoger_fecha_menu");
+		
+		DateObj dateObj = new DateObj();
+		model.addObject("dateObj", dateObj);
+		model.addObject("id_local", id_local);
+
+		return model;
+
+	}
+	@RequestMapping(value = { "/client/chooseDate/{id_local}" }, method = RequestMethod.GET)
+	public ModelAndView selectMenu(HttpServletRequest request, HttpSession session, @PathVariable("id_local") int id_local, DateObj dateObj) {
 		ModelAndView model = new ModelAndView("mostrar_menus_facultad");
 		Map<Integer, String> mapaMenusFacultad = new HashMap<Integer, String>();
 		
@@ -84,7 +95,10 @@ public class ControllerMVC {
 
 			ResultSet rs = st.executeQuery("select m.id_menu, m.nombre_menu\r\n"
 					+ "from menus as m left join locales_menus as lm on m.id_menu = lm.idMenu\r\n"
-					+ "right join locales as l on  lm.idLocal = l.id_local\r\n" + "where l.id_local = " + id_local + "; ");
+					+ "right join locales as l on  lm.idLocal = l.id_local \r\n"
+					+ "where l.id_local =" + id_local + "\r\n"
+					+ "and\r\n"
+					+ "m.fecha_publicacion='" + dateObj.getDate() + "'; ");
 
 			while (rs.next()) {
 				Integer id_menu = rs.getInt(1);
@@ -108,8 +122,8 @@ public class ControllerMVC {
 
 	}
 
-	@RequestMapping(value = { "/client/chooseAlergensComponents{id_menu}" }, method = RequestMethod.GET)
-	public ModelAndView choseComponentsAlergens(Menu menu, @PathVariable("id_menu") int id_menu, HttpServletRequest request, HttpSession session) {
+	@RequestMapping(value = { "/client/chooseAlergensComponents" }, method = RequestMethod.GET)
+	public ModelAndView choseComponentsAlergens(Menu menu, HttpServletRequest request, HttpSession session) {
 
 		ModelAndView model = new ModelAndView("chooseAlergensComponents");
 		

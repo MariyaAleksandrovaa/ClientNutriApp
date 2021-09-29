@@ -13,13 +13,13 @@ public class Menu {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	public int id_menu;
+	public Integer id_menu;
 	public String nombre_menu;
 	public String descripcion;
 	public java.sql.Timestamp fecha_creacion;
 	public int id_empresa;
 
-	public Menu(int id_menu, String nombre_menu, String descripcion, java.sql.Timestamp fecha_creacion, int id_empresa) {
+	public Menu(Integer id_menu, String nombre_menu, String descripcion, java.sql.Timestamp fecha_creacion, int id_empresa) {
 		this.id_menu = id_menu;
 		this.nombre_menu = nombre_menu;
 		this.descripcion = descripcion;
@@ -31,11 +31,11 @@ public class Menu {
 
 	}
 
-	public int getId_menu() {
+	public Integer getId_menu() {
 		return id_menu;
 	}
 
-	public void setId_menu(int id_menu) {
+	public void setId_menu(Integer id_menu) {
 		this.id_menu = id_menu;
 	}
 
