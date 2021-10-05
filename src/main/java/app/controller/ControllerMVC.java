@@ -2,7 +2,6 @@ package app.controller;
 
 import java.math.BigDecimal;
 
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -26,28 +25,33 @@ import org.springframework.web.servlet.ModelAndView;
 import app.Application;
 import app.model.ComponentsDishTable;
 import app.model.Menu;
+import app.model.User;
 import app.objects.GroupUnitObj;
 import app.objects.MenuObj;
 import app.objects.AlergensFood;
 import app.objects.ComponentsFood;
 import app.objects.DateObj;
+import app.repository.CompanyRepository;
 import app.repository.MenuRepository;
 
 @Controller
 public class ControllerMVC {
-	
+
 	@Autowired
 	private MenuRepository menuRepo;
-	
+
 	public String path;
 	public String path2;
+
+	@Autowired
+	public CompanyRepository companyRepo;
 
 	@RequestMapping(value = { "/index", "/" }, method = RequestMethod.GET)
 	public ModelAndView viewHomePage() {
 
 		Map<Integer, String> mapaLocales = new HashMap<Integer, String>();
 		ModelAndView model = new ModelAndView();
-		
+
 		try {
 			Statement st = Application.con.createStatement();
 			ResultSet rs = st.executeQuery("select id_local, nombre from locales;");
@@ -62,8 +66,7 @@ public class ControllerMVC {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		model.addObject("mapaLocales", mapaLocales);
 		model.setViewName("index");
 		return model;
@@ -71,9 +74,10 @@ public class ControllerMVC {
 	}
 
 	@RequestMapping(value = { "/client/{id_local}" }, method = RequestMethod.GET)
-	public ModelAndView selectDateMenu(HttpServletRequest request, HttpSession session, @PathVariable("id_local") int id_local) {
+	public ModelAndView selectDateMenu(HttpServletRequest request, HttpSession session,
+			@PathVariable("id_local") int id_local) {
 		ModelAndView model = new ModelAndView("escoger_fecha_menu");
-		
+
 		DateObj dateObj = new DateObj();
 		model.addObject("dateObj", dateObj);
 		model.addObject("id_local", id_local);
@@ -81,12 +85,17 @@ public class ControllerMVC {
 		return model;
 
 	}
+
+	public String dateCheck = "";
+
 	@RequestMapping(value = { "/client/chooseDate/{id_local}" }, method = RequestMethod.GET)
-	public ModelAndView selectMenu(HttpServletRequest request, HttpSession session, @PathVariable("id_local") int id_local, DateObj dateObj) {
+	public ModelAndView selectMenu(HttpServletRequest request, HttpSession session,
+			@PathVariable("id_local") int id_local, DateObj dateObj) {
 		ModelAndView model = new ModelAndView("mostrar_menus_facultad");
 		Map<Integer, String> mapaMenusFacultad = new HashMap<Integer, String>();
-		
+
 		path = request.getServletPath();
+		dateCheck = dateObj.getDate();
 
 		session.setAttribute("path", path);
 
@@ -95,10 +104,8 @@ public class ControllerMVC {
 
 			ResultSet rs = st.executeQuery("select m.id_menu, m.nombre_menu\r\n"
 					+ "from menus as m left join locales_menus as lm on m.id_menu = lm.idMenu\r\n"
-					+ "right join locales as l on  lm.idLocal = l.id_local \r\n"
-					+ "where l.id_local =" + id_local + "\r\n"
-					+ "and\r\n"
-					+ "m.fecha_publicacion='" + dateObj.getDate() + "'; ");
+					+ "right join locales as l on  lm.idLocal = l.id_local \r\n" + "where l.id_local =" + id_local
+					+ "\r\n" + "and\r\n" + "m.fecha_publicacion='" + dateObj.getDate() + "'; ");
 
 			while (rs.next()) {
 				Integer id_menu = rs.getInt(1);
@@ -117,63 +124,132 @@ public class ControllerMVC {
 		Menu menu = new Menu();
 		model.addObject("select", select);
 		model.addObject("menu", menu);
+		model.addObject("id_local", id_local);
+		model.addObject("date", dateCheck);
 
 		return model;
 
 	}
 
-	@RequestMapping(value = { "/client/chooseAlergensComponents" }, method = RequestMethod.GET)
-	public ModelAndView choseComponentsAlergens(Menu menu, HttpServletRequest request, HttpSession session) {
+	@RequestMapping(value = { "/client/{id_local}/{date}" }, method = RequestMethod.GET)
+	public ModelAndView selectMenu2(HttpServletRequest request, HttpSession session,
+			@PathVariable("id_local") int id_local, DateObj dateObj, @PathVariable("date") String date) {
+		ModelAndView model = new ModelAndView("mostrar_menus_facultad");
+		Map<Integer, String> mapaMenusFacultad = new HashMap<Integer, String>();
+
+		path = request.getServletPath();
+		dateCheck = dateObj.getDate();
+
+		session.setAttribute("path", path);
+
+		try {
+			Statement st = Application.con.createStatement();
+
+			ResultSet rs = st.executeQuery("select m.id_menu, m.nombre_menu\r\n"
+					+ "from menus as m left join locales_menus as lm on m.id_menu = lm.idMenu\r\n"
+					+ "right join locales as l on  lm.idLocal = l.id_local \r\n" + "where l.id_local =" + id_local
+					+ "\r\n" + "and\r\n" + "m.fecha_publicacion='" + dateObj.getDate() + "'; ");
+
+			while (rs.next()) {
+				Integer id_menu = rs.getInt(1);
+				String nombre_menu = rs.getString(2);
+				mapaMenusFacultad.put(id_menu, nombre_menu);
+			}
+
+			st.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		int select = 0;
+
+		model.addObject("mapaMenusFacultad", mapaMenusFacultad);
+
+		Menu menu = new Menu();
+		model.addObject("select", select);
+		model.addObject("menu", menu);
+		model.addObject("id_local", id_local);
+		model.addObject("date", dateCheck);
+
+		return model;
+
+	}
+
+	@RequestMapping(value = { "/client/chooseAlergensComponents/{id_local}/{date}//" }, method = RequestMethod.GET)
+	public ModelAndView choseComponentsAlergens(Menu menu, HttpServletRequest request, HttpSession session,
+			@PathVariable("id_local") int id_local, @PathVariable("date") String date) {
 
 		ModelAndView model = new ModelAndView("chooseAlergensComponents");
-		
+
 		path2 = request.getServletPath();
-		
-		
+
+		model.addObject("id_local", id_local);
 		model.addObject("id_menu", menu.getId_menu());
+		model.addObject("date", date);
+
 		return model;
 
 	}
 
-	
-	@RequestMapping("/client/ComponentesMenu{id_menu}")
-	public String checkIdComponents(@PathVariable("id_menu") int id_menu) {
+	@RequestMapping(value = {
+			"/client/chooseAlergensComponents/{id_local}/{date}/{id_menu}" }, method = RequestMethod.GET)
+	public ModelAndView choseComponentsAlergens2(Menu menu, HttpServletRequest request, HttpSession session,
+			@PathVariable("id_local") int id_local, @PathVariable("date") String date,
+			@PathVariable("id_menu") int id_menu) {
+
+		ModelAndView model = new ModelAndView("chooseAlergensComponents");
+
+		path2 = request.getServletPath();
+
+		model.addObject("id_local", id_local);
+		model.addObject("id_menu", id_menu);
+		model.addObject("date", date);
+
+		return model;
+
+	}
+
+	@RequestMapping("/client/ComponentesMenu/{id_menu}/{id_local}")
+	public String checkIdComponents(@PathVariable("id_menu") int id_menu, @PathVariable("id_local") int id_local) {
 
 		Menu menu = menuRepo.findById(id_menu).get();
-		
-		if(menu.getDescripcion().equals("Menú grupal")) {
-			return "redirect:/client/escoger_platos_menu_grupal_componentes/{id_menu}";
-			
-		}else if(menu.getDescripcion().equals("Menú individual")) {
-			return "redirect:/client/componentes_menu_individual/{id_menu}";
+
+		if (menu.getDescripcion().equals("Menú grupal")) {
+			return "redirect:/client/escoger_platos_menu_grupal_componentes/{id_menu}/{id_local}";
+
+		} else if (menu.getDescripcion().equals("Menú individual")) {
+			return "redirect:/client/componentes_menu_individual/{id_menu}/{id_local}";
 		}
 
 		return "";
 	}
-	
-	@RequestMapping("/client/AlergenosMenu{id_menu}")
+
+	@RequestMapping("/client/AlergenosMenu/{id_menu}/{id_local}")
 	public String checkIdAlergens(@PathVariable("id_menu") int id_menu) {
 
 		Menu menu = menuRepo.findById(id_menu).get();
-		
-		if(menu.getDescripcion().equals("Menú grupal")) {
-			return "redirect:/client/escoger_platos_menu_grupal_alergenos/{id_menu}";
-			
-		}else if(menu.getDescripcion().equals("Menú individual")) {
-			return "redirect:/client/alergenos_menu_individual/{id_menu}";
+
+		if (menu.getDescripcion().equals("Menú grupal")) {
+			return "redirect:/client/escoger_platos_menu_grupal_alergenos/{id_menu}/{id_local}";
+
+		} else if (menu.getDescripcion().equals("Menú individual")) {
+			return "redirect:/client/alergenos_menu_individual/{id_menu}/{id_local}";
 		}
 
 		return "";
 	}
-	
-	@RequestMapping({"/client/alergenos_menu_colectivo{id_menu}"})
-	public ModelAndView alergenosMenusColectivos(MenuObj menuObj, @PathVariable("id_menu") int id_menu) {
+
+	@RequestMapping({ "/client/alergenos_menu_colectivo/{id_menu}/{id_local}/{date}" })
+	public ModelAndView alergenosMenusColectivos(MenuObj menuObj, @PathVariable("id_menu") int id_menu,
+			@PathVariable("id_local") int id_local,
+			@PathVariable("date") String date) {
 		ModelAndView model = new ModelAndView("alergenos_menu");
 
 		Map<String, String> mapAlergensMenu = new HashMap<String, String>();
-		
+
 		model.addObject("path", path);
 		model.addObject("id_menu", id_menu);
+		model.addObject("id_local", id_local);
+		model.addObject("date", date);
 
 		if (menuObj.getFirst_dish() != 0) {
 			Map<String, String> mapFirstDish = obtenerAlergenosPlato(menuObj.getFirst_dish());
@@ -205,15 +281,17 @@ public class ControllerMVC {
 		return model;
 	}
 
-	
-	@GetMapping("/client/escoger_platos_menu_grupal_alergenos/{id_menu}")
-	public ModelAndView escogerPlatosMenuGrupalAlergenos(@PathVariable("id_menu") int id_menu) {
+	@GetMapping("/client/escoger_platos_menu_grupal_alergenos/{id_menu}/{id_local}")
+	public ModelAndView escogerPlatosMenuGrupalAlergenos(@PathVariable("id_menu") int id_menu,
+			@PathVariable("id_local") int id_local) {
 
 		ModelAndView model = new ModelAndView("escoger_platos_menu_grupal_alergenos");
-		
+
 		model.addObject("path", path);
 		model.addObject("id_menu", id_menu);
-		
+		model.addObject("id_local", id_local);
+		model.addObject("date", dateCheck);
+
 		List<Map<Integer, String>> listMapsTypeDishes = getListMapsTypeDishes(id_menu);
 
 		Map<Integer, String> mapaPlatosTipo1Menu = new HashMap<Integer, String>();
@@ -242,17 +320,19 @@ public class ControllerMVC {
 
 		return model;
 	}
-	
-	
-	@GetMapping({"/client/alergenos_menu_individual/{id_menu}"})
-	public ModelAndView alergenosMenusIndividuales(@PathVariable("id_menu") int id_menu) {
-		ModelAndView model = new ModelAndView("alergenos_menu");
+
+	@GetMapping({ "/client/alergenos_menu_individual/{id_menu}/{id_local}" })
+	public ModelAndView alergenosMenusIndividuales(@PathVariable("id_menu") int id_menu, @PathVariable("id_local") int id_local) {
+		ModelAndView model = new ModelAndView("alergenos_menu_ind");
 		Map<String, String> mapAlergensMenu = obtenerAlergenosMenu(id_menu);
+		
 		model.addObject("mapAlergensMenu", mapAlergensMenu);
+		model.addObject("id_local", id_local);
+		model.addObject("date", dateCheck);
 
 		return model;
 	}
-	
+
 	public Map<String, String> obtenerAlergenosMenu(int id_menu) {
 		Map<String, String> mapAlergensMenu = new HashMap<String, String>();
 
@@ -284,7 +364,7 @@ public class ControllerMVC {
 		return mapAlergensMenu;
 
 	}
-	
+
 	public Map<String, String> obtenerAlergenosPlato(int id_plato) {
 
 		Map<String, String> mapAlergensDish = null;
@@ -349,27 +429,90 @@ public class ControllerMVC {
 		}
 		return listaAlergenos;
 	}
-	
-	@GetMapping({"/client/componentes_menu_individual/{id_menu}"})
-	public ModelAndView componentesMenuIndividual(@PathVariable("id_menu") int id_menu) {
 
-		ModelAndView model = new ModelAndView("componentes_plato");
+	@GetMapping({ "/client/componentes_menu_individual/{id_menu}/{id_local}" })
+	public ModelAndView componentesMenuIndividual(@PathVariable("id_menu") int id_menu,
+			@PathVariable("id_local") int id_local) {
 
-		List<ComponentsDishTable> listComponentsDish = obtenerComponentesMenu(id_menu);
+		ModelAndView model = new ModelAndView("componentes_menu_ind");
+
+//		List<ComponentsDishTable> listComponentsDish = obtenerComponentesMenu(id_menu);
 		
+		obtenerComponentesMenuIndividual(id_menu, model);
+
 		model.addObject("id_menu", id_menu);
+		model.addObject("id_local", id_local);
 		model.addObject("path", path);
-		model.addObject("listComponentsDish", listComponentsDish);
+//		model.addObject("listComponentsDish", listComponentsDish);
+		model.addObject("date", dateCheck);
 
 		return model;
 	}
 	
+	public void obtenerComponentesMenuIndividual(int id_menu, ModelAndView model) {
+		List<Integer> listDishes = obtenerPlatosMenu(id_menu);
+
+		Map<String, List<ComponentsDishTable>> mapComponents = clasificarComponentes(
+				obtenerComponentesMenuGrupal(listDishes));
+		Map<String, Double> valoresProximales = calculoProximales(mapComponents);
+		Map<String, Double> valoresHC = calculoHC(mapComponents);
+
+		Double hcTotales = valoresHC.get("fibra") + valoresHC.get("azucar") + valoresHC.get("otrosHC");
+		Double acGrasos = calcularAcGrasos(mapComponents);
+
+		Double proporcionGrasas = valoresProximales.get("grasa") * 9;
+		Double proporcionProteinas = valoresProximales.get("proteina") * 4;
+		Double proporcionHC = hcTotales * 4;
+		Double proporcionValorOtrosHC = valoresHC.get("otrosHC") * 4;
+
+		Double proporcionValorFibra = valoresHC.get("fibra") * 4;
+		Double proporcionValorAzúcar = valoresHC.get("azucar") * 4;
+		Double proporcionAcGrasos = acGrasos * 9;
+
+		Double total = /*valoresProximales.get("energia") +*/ proporcionGrasas + proporcionProteinas + proporcionHC;
+
+		List<ComponentsDishTable> listComponentsDishOrdered = ordenarPorUnidad(mapComponents);
+
+//		Cargo datos de tabla completa
+		model.addObject("listComponentsDish", listComponentsDishOrdered);
+
+//		Cargo datos de tablas 
+		model.addObject("componentsDishTableProximal", mapComponents.get("proximales"));
+		model.addObject("componentsDishTableHcarbono", mapComponents.get("hc"));
+		model.addObject("componentsDishTableGrasa", mapComponents.get("grasas"));
+		model.addObject("componentsDishTableVitaminas", mapComponents.get("vitaminas"));
+		model.addObject("componentsDishTableMinerales", mapComponents.get("minerales"));
+
+//	Cargo datos del grafico
+		model.addObject("porcentajeGrasa", calcularPorcentaje(proporcionGrasas, total));
+		model.addObject("porcentajeProteinas", calcularPorcentaje(proporcionProteinas, total));
+		model.addObject("porcentajeHC", calcularPorcentaje(proporcionHC, total));
+//		model.addObject("porcentajeEnergia", calcularPorcentaje(valoresProximales.get("energia"), total));
+		model.addObject("porcentajeOtrosHC", calcularPorcentaje(proporcionValorOtrosHC, total));
+		model.addObject("porcentajeFibra", calcularPorcentaje(proporcionValorFibra, total));
+		model.addObject("porcentajeAzucar", calcularPorcentaje(proporcionValorAzúcar, total));
+		model.addObject("porcentajeAcGrasos", calcularPorcentaje(proporcionAcGrasos, total));
+
+		model.addObject("porcentajeOtrasGrasas",
+				round(calcularPorcentaje(proporcionGrasas, total) - calcularPorcentaje(proporcionAcGrasos, total), 2));
+
+
+	}
 	
+	@GetMapping({ "/client/componentes_menu_individual/{id_menu}" })
+	public ModelAndView componentesMenuIndividualAdmin(@PathVariable("id_menu") int id_menu) {
+
+		ModelAndView model = new ModelAndView("componentes_plato");
+
+		model.addObject("menuName", menuRepo.findById(id_menu).get().getNombre_menu());
+		obtenerComponentesMenuIndividual(id_menu, model);
+		return model;
+	}
 
 	public List<ComponentsDishTable> obtenerComponentesMenu(int id_menu) {
 		List<ComponentsDishTable> listListComponentsDish = new ArrayList<ComponentsDishTable>();
 		List<ComponentsDishTable> listComponentsDish;
-		Map<String, Float> mapComponentsMenu = new HashMap<String, Float>();
+		Map<String, Double> mapComponentsMenu = new HashMap<String, Double>();
 
 		try {
 
@@ -391,8 +534,8 @@ public class ControllerMVC {
 									listComponentsDish.get(i).getAmount());
 
 						} else {
-							float oldAmount = mapComponentsMenu.get(listComponentsDish.get(i).getNameComponent());
-							float newAmount = listComponentsDish.get(i).getAmount();
+							Double oldAmount = mapComponentsMenu.get(listComponentsDish.get(i).getNameComponent());
+							Double newAmount = listComponentsDish.get(i).getAmount();
 							mapComponentsMenu.replace(listComponentsDish.get(i).getNameComponent(),
 									oldAmount + newAmount);
 						}
@@ -435,7 +578,7 @@ public class ControllerMVC {
 		return listListComponentsDish;
 
 	}
-	
+
 	public List<ComponentsDishTable> obtenerBDcomponentesPlato(int id_plato) {
 
 		List<ComponentsDishTable> listComponentDishTable = new ArrayList<ComponentsDishTable>();
@@ -481,7 +624,7 @@ public class ControllerMVC {
 				while (rs2.next()) {
 					String nombreComponente = rs2.getString(1);
 					String descripcionComponente = rs2.getString(2);
-					Float valor = rs2.getFloat(3);
+					Double valor = rs2.getDouble(3);
 					String unidad = rs2.getString(4);
 					String descripcion = rs2.getString(5);
 
@@ -506,7 +649,7 @@ public class ControllerMVC {
 			}
 			st2.close();
 
-			Map<String, Float> mapComponentsDish2 = new HashMap<String, Float>();
+			Map<String, Double> mapComponentsDish2 = new HashMap<String, Double>();
 
 			for (var ingrediente : mapComponentsDish.entrySet()) {
 
@@ -516,10 +659,10 @@ public class ControllerMVC {
 				for (int i = 0; i < listaCompon.size(); i++) {
 					if (mapComponentsDish2.get(listaCompon.get(i).getC_ori_name()) == null) {
 
-						Float amount = listaCompon.get(i).getBest_location();
+						Double amount = listaCompon.get(i).getBest_location();
 
 						String proportion = listaCompon.get(i).getDescripcion();
-						Float propor = null;
+						Double propor = null;
 						switch (proportion) {
 						case "por 100 g de porción comestible":
 							propor = amount / 100;
@@ -536,14 +679,15 @@ public class ControllerMVC {
 
 						}
 						BigDecimal quantity = mapIngredientAmount.get(ingrediente.getKey());
-						mapComponentsDish2.put(listaCompon.get(i).getC_ori_name(), propor * quantity.floatValue());
+						mapComponentsDish2.put(listaCompon.get(i).getC_ori_name(),
+								round(propor * quantity.floatValue(), 2));
 
 					} else {
-						Float value = mapComponentsDish2.get(listaCompon.get(i).getC_ori_name());
-						Float amount = listaCompon.get(i).getBest_location();
+						Double value = mapComponentsDish2.get(listaCompon.get(i).getC_ori_name());
+						Double amount = listaCompon.get(i).getBest_location();
 
 						String proportion = listaCompon.get(i).getDescripcion();
-						Float propor = null;
+						Double propor = null;
 						switch (proportion) {
 						case "por 100 g de porción comestible":
 							propor = amount / 100;
@@ -560,8 +704,8 @@ public class ControllerMVC {
 
 						}
 						BigDecimal quantity = mapIngredientAmount.get(ingrediente.getKey());
-						Float sum = value + propor * quantity.floatValue();
-						mapComponentsDish2.replace(listaCompon.get(i).getC_ori_name(), sum);
+						Double sum = value + propor * quantity.floatValue();
+						mapComponentsDish2.replace(listaCompon.get(i).getC_ori_name(), round(sum, 2));
 
 					}
 				}
@@ -590,18 +734,21 @@ public class ControllerMVC {
 
 		return listComponentDishTable;
 	}
-	
+
 //	Permite escoger los platos del menú que se van a consumir para proceder a calcular los alérgeno del mismo
-	@RequestMapping("/client/escoger_platos_menu_grupal_componentes/{id_menu}")
-	public ModelAndView escogerPlatosMenuGrupalComponentes_user(@PathVariable("id_menu") int id_menu) {
+	@RequestMapping("/client/escoger_platos_menu_grupal_componentes/{id_menu}/{id_local}")
+	public ModelAndView escogerPlatosMenuGrupalComponentes_user(@PathVariable("id_menu") int id_menu,
+			@PathVariable("id_local") int id_local) {
 
 		ModelAndView model = new ModelAndView("escoger_platos_menu_grupal_componentes_user");
 
 		model.addObject("path2", path2);
 //		String path = request.getServletPath();
 		model.addObject("path", path);
+		model.addObject("date", dateCheck);
+		model.addObject("id_local", id_local);
 //		session.setAttribute("path", path);
-		
+
 		List<Map<Integer, String>> listMapsTypeDishes = getListMapsTypeDishes(id_menu);
 
 		Map<Integer, String> mapaPlatosTipo1Menu = new HashMap<Integer, String>();
@@ -630,6 +777,7 @@ public class ControllerMVC {
 
 		return model;
 	}
+
 	public List<Map<Integer, String>> getListMapsTypeDishes(int id_menu) {
 
 		List<Map<Integer, String>> listMapsTypeDishes = new ArrayList<Map<Integer, String>>();
@@ -681,78 +829,293 @@ public class ControllerMVC {
 
 		return listMapsTypeDishes;
 	}
-	
-	@RequestMapping("/client/componentes_menu_colectivo{id_menu}")
-	public ModelAndView componentesMenuColectivo_user(MenuObj menuObj, HttpSession session, HttpServletRequest request, @PathVariable("id_menu") int id_menu) {
+
+	@RequestMapping("/client/componentes_menu_colectivo/{id_menu}/{id_local}/{date}")
+	public ModelAndView componentesMenuColectivo_user(MenuObj menuObj, HttpSession session, HttpServletRequest request,
+			@PathVariable("id_menu") int id_menu, @PathVariable("id_local") int id_local,
+			@PathVariable("date") String date) {
 
 		ModelAndView model = new ModelAndView("componentes_plato");
+		model.addObject("menuName", menuRepo.findById(id_menu).get().getNombre_menu());
 		model.addObject("id_menu", id_menu);
-		
-		
-		String path = request.getServletPath();
-		session.setAttribute("path", path);
+		obtenerComponentesMenucolectivo(menuObj, model);
+		return model;
+	}
 
+	public void obtenerComponentesMenucolectivo(MenuObj menuObj, ModelAndView model) {
 		List<Integer> listDishes = new ArrayList<Integer>();
-		listDishes.add(menuObj.getFirst_dish());
-		listDishes.add(menuObj.getSecond_dish());
-		listDishes.add(menuObj.getThird_dish());
 
-		List<ComponentsDishTable> listListComponentsDish = new ArrayList<ComponentsDishTable>();
-		List<ComponentsDishTable> listComponentsDish;
-		Map<String, Float> mapComponentsMenu = new HashMap<String, Float>();
+		if (menuObj.getFirst_dish() != null) {
+			listDishes.add(menuObj.getFirst_dish());
+
+		}
+		if (menuObj.getSecond_dish() != null) {
+			listDishes.add(menuObj.getSecond_dish());
+
+		}
+		if (menuObj.getThird_dish() != null) {
+			listDishes.add(menuObj.getThird_dish());
+		}
+
+		Map<String, List<ComponentsDishTable>> mapComponents = clasificarComponentes(
+				obtenerComponentesMenuGrupal(listDishes));
+		Map<String, Double> valoresProximales = calculoProximales(mapComponents);
+		Map<String, Double> valoresHC = calculoHC(mapComponents);
+
+		Double hcTotales = valoresHC.get("fibra") + valoresHC.get("azucar") + valoresHC.get("otrosHC");
+		Double acGrasos = calcularAcGrasos(mapComponents);
+
+		Double proporcionGrasas = valoresProximales.get("grasa") * 9;
+		Double proporcionProteinas = valoresProximales.get("proteina") * 4;
+		Double proporcionHC = hcTotales * 4;
+		Double proporcionValorOtrosHC = valoresHC.get("otrosHC") * 4;
+
+		Double proporcionValorFibra = valoresHC.get("fibra") * 4;
+		Double proporcionValorAzúcar = valoresHC.get("azucar") * 4;
+		Double proporcionAcGrasos = acGrasos * 9;
+
+		Double total = /* valoresProximales.get("energia") + */ proporcionGrasas + proporcionProteinas + proporcionHC;
+
+		List<ComponentsDishTable> listComponentsDishOrdered = ordenarPorUnidad(mapComponents);
+
+//		Cargo datos de tabla completa
+		model.addObject("listComponentsDish", listComponentsDishOrdered);
+
+//		Cargo datos de tablas 
+		model.addObject("componentsDishTableProximal", mapComponents.get("proximales"));
+		model.addObject("componentsDishTableHcarbono", mapComponents.get("hc"));
+		model.addObject("componentsDishTableGrasa", mapComponents.get("grasas"));
+		model.addObject("componentsDishTableVitaminas", mapComponents.get("vitaminas"));
+		model.addObject("componentsDishTableMinerales", mapComponents.get("minerales"));
+
+//	Cargo datos del grafico
+		model.addObject("porcentajeGrasa", calcularPorcentaje(proporcionGrasas, total));
+		model.addObject("porcentajeProteinas", calcularPorcentaje(proporcionProteinas, total));
+		model.addObject("porcentajeHC", calcularPorcentaje(proporcionHC, total));
+//		model.addObject("porcentajeEnergia", calcularPorcentaje(valoresProximales.get("energia"), total));
+		model.addObject("porcentajeOtrosHC", calcularPorcentaje(proporcionValorOtrosHC, total));
+		model.addObject("porcentajeFibra", calcularPorcentaje(proporcionValorFibra, total));
+		model.addObject("porcentajeAzucar", calcularPorcentaje(proporcionValorAzúcar, total));
+		model.addObject("porcentajeAcGrasos", calcularPorcentaje(proporcionAcGrasos, total));
+
+		model.addObject("porcentajeOtrasGrasas",
+				round(calcularPorcentaje(proporcionGrasas, total) - calcularPorcentaje(proporcionAcGrasos, total), 2));
+
+	}
+
+	public Map<String, Double> calculoProximales(Map<String, List<ComponentsDishTable>> mapComponents) {
+
+		Map<String, Double> valoresProximales = new HashMap<String, Double>();
+
+		Double valorProteína = Double.valueOf(0);
+		Double valorEnergético = Double.valueOf(0);
+		Double valorGrasa = Double.valueOf(0);
+
+		for (ComponentsDishTable componentsDishTable : mapComponents.get("proximales")) {
+
+			if (componentsDishTable.getNameComponent().equals("proteina, total")) {
+				valorProteína += componentsDishTable.getAmount();
+
+			} else if (componentsDishTable.getNameComponent().equals("energía, total")) {
+				valorEnergético += componentsDishTable.getAmount();
+
+			} else if (componentsDishTable.getNameComponent().equals("grasa, total (lipidos totales)")) {
+				valorGrasa += componentsDishTable.getAmount();
+			}
+		}
+		valoresProximales.put("proteina", valorProteína);
+		valoresProximales.put("energia", valorEnergético);
+		valoresProximales.put("grasa", valorGrasa);
+
+		return valoresProximales;
+	}
+
+	public Map<String, Double> calculoHC(Map<String, List<ComponentsDishTable>> mapComponents) {
+		Map<String, Double> valoresHC = new HashMap<String, Double>();
+
+		Double valorOtrosHC = Double.valueOf(0);
+		Double valorFibra = Double.valueOf(0);
+		Double valorAzúcar = Double.valueOf(0);
+
+		for (ComponentsDishTable componentsDishTable : mapComponents.get("hc")) {
+
+			if (componentsDishTable.getNameComponent().equals("fibra, dietetica total")) {
+				valorFibra += componentsDishTable.getAmount();
+
+			} else if (componentsDishTable.getNameComponent().equals("azucares, totales")) {
+				valorAzúcar += componentsDishTable.getAmount();
+			} else {
+				valorOtrosHC += componentsDishTable.getAmount();
+			}
+		}
+
+		valoresHC.put("fibra", valorFibra);
+		valoresHC.put("azucar", valorAzúcar);
+		valoresHC.put("otrosHC", valorOtrosHC);
+
+		return valoresHC;
+	}
+
+	public Double calcularAcGrasos(Map<String, List<ComponentsDishTable>> mapComponents) {
+		Double acGrasos = Double.valueOf(0);
+		for (ComponentsDishTable componentsDishTable : mapComponents.get("grasas")) {
+
+			if (componentsDishTable.getNameComponent().contains("ácidos grasos")) {
+				acGrasos += componentsDishTable.getAmount();
+
+			}
+		}
+		return acGrasos;
+	}
+
+	public List<ComponentsDishTable> ordenarComponentesPorUnidadCantidad(
+			List<ComponentsDishTable> componentsDishTableVitaminas) {
+
+		List<ComponentsDishTable> listComponentsDishTable = new ArrayList<ComponentsDishTable>();
+
+		List<ComponentsDishTable> componentsDishTableKcal = new ArrayList<ComponentsDishTable>();
+		List<ComponentsDishTable> componentsDishTableG = new ArrayList<ComponentsDishTable>();
+		List<ComponentsDishTable> componentsDishTableMG = new ArrayList<ComponentsDishTable>();
+		List<ComponentsDishTable> componentsDishTableUG = new ArrayList<ComponentsDishTable>();
+
+		for (ComponentsDishTable componentsDishTable : componentsDishTableVitaminas) {
+			if (componentsDishTable.getUnit().equals("kcal") || componentsDishTable.getUnit().equals("kj(kcal)")) {
+				componentsDishTableKcal.add(componentsDishTable);
+
+			} else if (componentsDishTable.getUnit().equals("g")) {
+				componentsDishTableG.add(componentsDishTable);
+
+			} else if (componentsDishTable.getUnit().equals("mg")) {
+				componentsDishTableMG.add(componentsDishTable);
+
+			} else if (componentsDishTable.getUnit().equals("ug")) {
+				componentsDishTableUG.add(componentsDishTable);
+
+			}
+		}
+		listComponentsDishTable.addAll(componentsDishTableKcal);
+		listComponentsDishTable.addAll(componentsDishTableG);
+		listComponentsDishTable.addAll(componentsDishTableMG);
+		listComponentsDishTable.addAll(componentsDishTableUG);
+
+		return listComponentsDishTable;
+
+	}
+
+	public List<ComponentsDishTable> ordenarPorUnidad(Map<String, List<ComponentsDishTable>> mapComponents) {
+		List<ComponentsDishTable> listComponentsDishOrdered = new ArrayList<ComponentsDishTable>();
+
+		listComponentsDishOrdered.addAll(ordenarComponentesPorUnidadCantidad(mapComponents.get("proximales")));
+		listComponentsDishOrdered.addAll(ordenarComponentesPorUnidadCantidad(mapComponents.get("hc")));
+		listComponentsDishOrdered.addAll(ordenarComponentesPorUnidadCantidad(mapComponents.get("grasas")));
+		listComponentsDishOrdered.addAll(ordenarComponentesPorUnidadCantidad(mapComponents.get("vitaminas")));
+		listComponentsDishOrdered.addAll(ordenarComponentesPorUnidadCantidad(mapComponents.get("minerales")));
+
+		return listComponentsDishOrdered;
+	}
+
+	public double calcularPorcentaje(double proporcionGrasas, Double total) {
+		double porcentajeGrasa2 = proporcionGrasas / total;
+		return Math.round(porcentajeGrasa2 * 100 * 100) / 100.0;
+	}
+
+	public List<Integer> obtenerPlatosMenu(int id_menu) {
+		List<Integer> listDishes = new ArrayList<Integer>();
+		ResultSet rs;
+		try {
+			Statement st = Application.con.createStatement();
+			rs = st.executeQuery("select idPlato from menus_platos where idMenu = " + id_menu + ";");
+
+			while (rs.next()) {
+				listDishes.add(rs.getInt(1));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return listDishes;
+	}
+
+	public List<ComponentsDishTable> obtenerComponentesMenuGrupal(List<Integer> listDishes) {
+		List<ComponentsDishTable> listComponentsDishAux = new ArrayList<ComponentsDishTable>();
 
 		for (int i = 0; i < listDishes.size(); i++) {
 			if (listDishes.get(i) != 0) {
-				// He obtenido los componentes que tiene un plato
-				listComponentsDish = obtenerBDcomponentesPlato(listDishes.get(i));
 
+				List<ComponentsDishTable> listComponentsDish = obtenerBDcomponentesPlato(listDishes.get(i));
 				for (int j = 0; j < listComponentsDish.size(); j++) {
-					// Cuando no existe entrada en mapa para ese componente
-					if (mapComponentsMenu.get(listComponentsDish.get(j).getNameComponent()) == null) {
-						mapComponentsMenu.put(listComponentsDish.get(j).getNameComponent(),
-								listComponentsDish.get(j).getAmount());
 
-					} else {
-						float oldAmount = mapComponentsMenu.get(listComponentsDish.get(j).getNameComponent());
-						float newAmount = listComponentsDish.get(j).getAmount();
-						mapComponentsMenu.replace(listComponentsDish.get(j).getNameComponent(), oldAmount + newAmount);
-					}
-				}
-				listListComponentsDish.addAll(listComponentsDish);
-
-				// Mantengo lista con componentes sin repetir
-				// Recorro las listas de listas
-				for (int j = 0; j < listListComponentsDish.size(); j++) {
-
-					String component = listListComponentsDish.get(j).getNameComponent();
-
-					for (int k = 0; k < listListComponentsDish.size(); k++) {
-						if (j != k) {
-							String component2 = listListComponentsDish.get(k).getNameComponent();
-							if (component.equals(component2)) {
-								listListComponentsDish.remove(k);
-
-							}
+					boolean flag = false;
+					for (int k = 0; k < listComponentsDishAux.size(); k++) {
+						if (listComponentsDishAux.get(k).getNameComponent()
+								.equals(listComponentsDish.get(j).getNameComponent())) {
+							flag = true;
+							listComponentsDishAux.get(k).setAmount(round(
+									listComponentsDishAux.get(k).getAmount() + listComponentsDish.get(j).getAmount(),
+									2));
 						}
+					}
+					if (!flag) {
+						listComponentsDishAux.add(listComponentsDish.get(j));
 
 					}
-				}
-				for (int j = 0; j < listListComponentsDish.size(); j++) {
-					listListComponentsDish.get(j)
-							.setAmount(mapComponentsMenu.get(listListComponentsDish.get(j).getNameComponent()));
+					flag = false;
+
 				}
 			}
 
 		}
-		listComponentsDish = listListComponentsDish;
-		model.addObject("listComponentsDish", listComponentsDish);
-
-		return model;
+		return listComponentsDishAux;
 	}
 
+	public double round(double value, int places) {
+		if (places < 0)
+			throw new IllegalArgumentException();
 
+		long factor = (long) Math.pow(10, places);
+		value = value * factor;
+		long tmp = Math.round(value);
+		return (double) tmp / factor;
+	}
 
+	public Map<String, List<ComponentsDishTable>> clasificarComponentes(List<ComponentsDishTable> listComponentsDish) {
 
-	
-	
+		Map<String, List<ComponentsDishTable>> listOrderedComponents = new HashMap<String, List<ComponentsDishTable>>();
+
+		List<ComponentsDishTable> componentsDishTableProximal = new ArrayList<ComponentsDishTable>();
+		List<ComponentsDishTable> componentsDishTableHcarbono = new ArrayList<ComponentsDishTable>();
+		List<ComponentsDishTable> componentsDishTableGrasa = new ArrayList<ComponentsDishTable>();
+
+		List<ComponentsDishTable> componentsDishTableVitaminas = new ArrayList<ComponentsDishTable>();
+		List<ComponentsDishTable> componentsDishTableMinerales = new ArrayList<ComponentsDishTable>();
+
+		for (int i = 0; i < listComponentsDish.size(); i++) {
+			ComponentsDishTable componentsDishTable = listComponentsDish.get(i);
+
+			if (componentsDishTable.getGroupComponent().equals("Proximales")) {
+				componentsDishTableProximal.add(componentsDishTable);
+
+			} else if (componentsDishTable.getGroupComponent().equals("Hidratos de Carbono")) {
+				componentsDishTableHcarbono.add(componentsDishTable);
+
+			} else if (componentsDishTable.getGroupComponent().equals("Grasas")) {
+				componentsDishTableGrasa.add(componentsDishTable);
+
+			} else if (componentsDishTable.getGroupComponent().equals("Vitaminas")) {
+				componentsDishTableVitaminas.add(componentsDishTable);
+
+			} else if (componentsDishTable.getGroupComponent().equals("Minerales")) {
+				componentsDishTableMinerales.add(componentsDishTable);
+
+			}
+		}
+		listOrderedComponents.put("minerales", componentsDishTableMinerales);
+		listOrderedComponents.put("vitaminas", componentsDishTableVitaminas);
+		listOrderedComponents.put("grasas", componentsDishTableGrasa);
+		listOrderedComponents.put("hc", componentsDishTableHcarbono);
+		listOrderedComponents.put("proximales", componentsDishTableProximal);
+
+		return listOrderedComponents;
+	}
+
 }

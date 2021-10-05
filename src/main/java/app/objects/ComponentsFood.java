@@ -6,13 +6,13 @@ public class ComponentsFood {
 
 	public String grupo;
 	public String c_ori_name;
-	public float best_location;
+	public Double best_location;
 	public String v_unit;
 	public String descripcion;
 	public BigDecimal calorias;
 	public String unity;
 
-	public ComponentsFood(String grupo, String c_ori_name, float best_location, String v_unit, String descripcion) {
+	public ComponentsFood(String grupo, String c_ori_name, Double best_location, String v_unit, String descripcion) {
 		this.grupo = grupo;
 		this.c_ori_name = c_ori_name;
 		this.best_location = best_location;
@@ -40,11 +40,11 @@ public class ComponentsFood {
 		this.c_ori_name = c_ori_name;
 	}
 
-	public float getBest_location() {
+	public Double getBest_location() {
 		return best_location;
 	}
 
-	public void setBest_location(float best_location) {
+	public void setBest_location(Double best_location) {
 		this.best_location = best_location;
 	}
 

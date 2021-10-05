@@ -15,20 +15,20 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 <!-- Custom Theme files -->
-<link href="../css/bootstrap.css" type="text/css" rel="stylesheet" media="all">
+<link href="../../../../../css/bootstrap.css" type="text/css" rel="stylesheet" media="all">
 
 <!-- CSS only -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"/>
 <!-- JavaScript Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
-<link href="../css/style.css" type="text/css" rel="stylesheet" media="all">   
-<link href="../css/font-awesome.css" rel="stylesheet"> <!-- font-awesome icons --> 
-<link rel="stylesheet" href="../css/smoothbox.css" type='text/css' media="all" /> 
+<link href="../../../../../css/style.css" type="text/css" rel="stylesheet" media="all">   
+<link href="../../../../../css/font-awesome.css" rel="stylesheet"> <!-- font-awesome icons --> 
+<link rel="stylesheet" href="../../../../../css/smoothbox.css" type='text/css' media="all" /> 
 <!-- //Custom Theme files --> 
 
 <!-- js -->
-<script src="../js/jquery-2.2.3.min.js"></script>  
+<script src="../../../../../js/jquery-2.2.3.min.js"></script>  
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
 <!-- //js -->
@@ -61,19 +61,25 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	<!-- //banner -->   
 	<!-- gallery -->
 	<div class="about gallery">
-
 		<div class="container">  
 			<nav aria-label="breadcrumb">
 			  <ol class="breadcrumb" style="background-color:#ffffff;font-size:1.5em;">
 			  	<li class="breadcrumb-item"><a th:href="@{/index}">Página principal</a></li>
-			    <li class="breadcrumb-item"><a th:href="@{${session.path}}">Escoger menú</a></li>
+			  	<li class="breadcrumb-item">
+			  		<a th:href="@{'/client/' + ${id_local}}">Escoger fecha del menú</a>
+			  	</li>
+			  	<li class="breadcrumb-item">
+			  		<a th:href="@{'/client/' + ${id_local} + '/' + ${date}}">Escoger menú</a>
+			  	</li>
+<!-- 			    <li class="breadcrumb-item active">Escoger menú</li> -->
+<!-- 			    <li class="breadcrumb-item"><a th:href="@{${session.path}}">Escoger menú</a></li> -->
 			    <li class="breadcrumb-item active">Escoger componentes o alérgenos</li>
 			  </ol>
 			</nav>
-            	<div class="botonesEdicion" style="margin-left:40%;margin-top:60px;" >
-                   	<a th:href="@{'/client/ComponentesMenu' + ${id_menu}}" class="btn btn-info btn-lg" style="background-color: #3c89d0;border-color:#3c89d0;color:#ffffff;font-size:2.5rem;">Componentes</a>
-                   	<a th:href="@{'/client/AlergenosMenu' + ${id_menu}}" class="btn btn-info btn-lg" style="margin-left:20px;background-color: #c38452;border-color:#c38452;color:#ffffff;font-size:2.5rem;">Alérgenos</a>
-                </div>
+           	<div class="botonesEdicion" style="margin-left:40%;margin-top:60px;" >
+                <a th:href="@{'/client/ComponentesMenu/' + ${id_menu} + '/' + ${id_local}}" class="btn btn-info btn-lg" style="background-color: #3c89d0;border-color:#3c89d0;color:#ffffff;font-size:2.5rem;">Componentes</a>
+            	<a th:href="@{'/client/AlergenosMenu/' + ${id_menu} + '/' + ${id_local}}" class="btn btn-info btn-lg" style="margin-left:20px;background-color: #c38452;border-color:#c38452;color:#ffffff;font-size:2.5rem;">Alérgenos</a>
+            </div>
 		</div>
 	</div>
 	<!-- //gallery -->  

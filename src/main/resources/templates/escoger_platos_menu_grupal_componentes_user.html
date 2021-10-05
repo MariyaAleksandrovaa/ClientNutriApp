@@ -65,9 +65,16 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		<div class="container">
 			<nav aria-label="breadcrumb">
 			  <ol class="breadcrumb" style="background-color:#ffffff;font-size:1.5em;">
-			  	<li class="breadcrumb-item"><a th:href="@{/index}">Página principal</a></li>
-			    <li class="breadcrumb-item"><a th:href="@{${path}}">Escoger menú</a></li>
-			    <li class="breadcrumb-item"><a th:href="@{'/client/chooseAlergensComponents' + ${id_menu}}">Escoger componentes o alérgenos</a></li>
+			  	<li class="breadcrumb-item">
+			  		<a th:href="@{/index}">Página principal</a>
+			  	</li>
+			  	<li class="breadcrumb-item">
+			  		<a th:href="@{'/client/' + ${id_local}}">Escoger fecha del menú</a>
+			  	</li>
+			    <li class="breadcrumb-item">
+			    	<a th:href="@{'/client/' + ${id_local} + '/' + ${date}}">Escoger menú</a>
+			    </li>
+			    <li class="breadcrumb-item"><a th:href="@{'/client/chooseAlergensComponents/' + ${id_local} + '/' + ${date} + '/' + ${id_menu} + '/'}">Escoger componentes o alérgenos</a></li>
 			    <li class="breadcrumb-item active">Escoger platos menú grupal</li>
 			  </ol>
 			</nav>
@@ -75,7 +82,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 				<div class="tab-content" style="margin-left: 20%;">
 						<div role="tabpanel" class="tab-pane active" id="seccion1" style="width: 50%;margin: 0 auto;">
 						<form
-							th:action="@{'/client/componentes_menu_colectivo'+ ${id_menu}}"
+							th:action="@{'/client/componentes_menu_colectivo/'+ ${id_menu} + '/' + ${id_local} + '/' + ${date}}"
 							th:object="${menuObj}" 
 							method="post" >			
 											
