@@ -33,13 +33,62 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
 <!-- //js -->
 
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <!-- web-fonts -->   
 <link href="//fonts.googleapis.com/css?family=Playfair+Display:400,400i,700,700i,900,900i" rel="stylesheet">
-<!-- //web-fonts -->
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<style>
+.highcharts-figure,
+.highcharts-data-table table {
+    min-width: 320px;
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+.highcharts-data-table table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid #ebebeb;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.highcharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+}
+
+.highcharts-data-table th {
+    font-weight: 600;
+    padding: 0.5em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+    padding: 0.5em;
+}
+
+.highcharts-data-table thead tr,
+.highcharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+
+.highcharts-data-table tr:hover {
+    background: #f1f7ff;
+}
+
+input[type="number"] {
+    min-width: 50px;
+}
+</style>
 </head>
 
 <body> 
@@ -438,7 +487,6 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	    }
 	});
 	</script>
-
 	<script>
 	$("#completeTable td:nth-child(1)").each( function(x){
 	     const texto = this.innerHTML;
@@ -449,202 +497,116 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	        case "Grasas":
 		           color = "#FADB44" ;
 		           break;
+	        case "Colesterol":
+		           color = "#FADB44" ;
+		           break;
+	        case "Grasas saturadas":
+		           color = "#FADB44" ;
+		           break;
+	        case "Grasas monoinsaturada":
+		           color = "#FADB44" ;
+		           break;
+	        case "Grasas trans":
+		           color = "#FADB44" ;
+		           break;		
+	        case "Grasas poliinsaturada":
+		           color = "#FADB44" ;
+		           break;
+		           
+	        case "de las cuales saturadas":
+		           color = "#FADB44" ;
+		           break;
+	        case "Valor energético":
+		           color = "#E0E0E0" ;
+		           break;		
+	        case "Fibra":
+		           color = "#CCFF99" ;
+		           break;			           
 	        case "Hidratos de Carbono":
 		           color = "#FAB8AA" ;
 		           break;
-		           
+	        case "de los cuales azúcares":
+		           color = "#F1C7FF" ;
+		           break;		   
+	        case "Proteínas":
+		           color = "#99CCFF" ;
+		           break;			           
 	        case "Vitaminas":
 		           color = "#95F59A" ;
 		           break;
 	        case "Minerales":
 		           color = "#F1C7FF" ;
 		           break;  
+	        case "Sal":
+		           color = "#FCE4CA" ;
+		           break;  		
 		    default:
 		    		color ="#ffffff"
 	     }
 	     $(this.parentNode).attr("style","background-color:"+color)
 	})
 	</script>
-	<script  th:inline="javascript">
-
-	/*<![CDATA[*/
+	<script type="text/javascript">
 	
-	    var porcentajeProteinas = /*[[${porcentajeProteinas}]]*/ 'default';
-// 		var porcentajeEnergia = /*[[${porcentajeEnergia}]]*/ 'default';
-		var porcentajeHC = /*[[${porcentajeHC}]]*/ 'default';
-		var porcentajeGrasa = /*[[${porcentajeGrasa}]]*/ 'default';
-		
-		var porcentajeOtrosHC= /*[[${porcentajeOtrosHC}]]*/ 'default';
-		var porcentajeFibra = /*[[${porcentajeFibra}]]*/ 'default';
-		var porcentajeAzucar = /*[[${porcentajeAzucar}]]*/ 'default';
-		
-		var porcentajeAcGrasos = /*[[${porcentajeAcGrasos}]]*/ 'default';
-		var porcentajeOtrasGrasas = /*[[${porcentajeOtrasGrasas}]]*/ 'default';
-	
-	/*]]>*/
-	var colors = Highcharts.getOptions().colors,
-	  categories = [
-// 	    'Energía',
-	    'Grasas',
-	    'Proteína',
-	    'Hidratos de Carbono'
-	  ],
-	  data = [
-// 	    {
-// 	      y: porcentajeEnergia,
-// 	      color:  colors[2],
-// 	      drilldown: {
-// 	        name: 'Energía',
-// 	        categories: [
-// 	          'Energía'
-// 	        ],
-// 	        data: [
-// 	        	porcentajeEnergia
-// 	        ]
-// 	      }
-// 	    },
-	    {
-	      y: porcentajeGrasa,
-	      color: colors[4],
-	      drilldown: {
-	        name: 'Grasas',
-	        categories: [
-		          'Ácidos grasos',
-		          'Otras grasas'
-	        ],
-	        data: [
-	        	porcentajeAcGrasos,
-	        	porcentajeOtrasGrasas
-	          
-	        ]
-	      }
-	    },
-	    {
-	      y: porcentajeProteinas,
-	      color: colors[0],
-	      drilldown: {
-	        name: 'Proteína',
-	        categories: [
-	          'Proteína'
-	        ],
-	        data: [
-	        	porcentajeProteinas
-	        ]
-	      }
-	    },
-	    {
-	      y: porcentajeHC,
-	      color: colors[3],
-	      drilldown: {
-	        name: 'Hidratos de Carbono',
-	        categories: [
-	          'Fibra',
-	          'Azúcares',
-	          'Otros Hidratos de Carbono'
-	        ],
-	        data: [
-	        	porcentajeFibra,
-	        	porcentajeAzucar,
-	        	porcentajeOtrosHC
-	        ]
-	      }
-		    }
-	  ],
-	  salaryData = [],
-	  percentageData = [],
-	  i,
-	  j,
-	  dataLen = data.length,
-	  drillDataLen,
-	  brightness;
+	var porcentajeProteinas = "[[${porcentajeProteinas}]]";
+	var porcentajeHC = "[[${porcentajeHC}]]";
+	var porcentajeFibra = "[[${porcentajeFibra}]]";
+	var porcentajeGrasas = "[[${porcentajeGrasas}]]";
+	var porcentajeSal = "[[${porcentajeSal}]]";
 
-
-	// Build the data arrays
-	for (i = 0; i < dataLen; i += 1) {
-
-	  // add browser data
-	  salaryData.push({
-	    name: categories[i],
-	    y: data[i].y,
-	    color: data[i].color
-	  });
-
-	  // add percentage data
-	  drillDataLen = data[i].drilldown.data.length;
-	  for (j = 0; j < drillDataLen; j += 1) {
-	    brightness = 0.2 - (j / drillDataLen) / 5;
-	    percentageData.push({
-	      name: data[i].drilldown.categories[j],
-	      y: data[i].drilldown.data[j],
-	      color: Highcharts.color(data[i].color).brighten(brightness).get()
-	    });
-	  }
-	}
-
-	// Create the chart
 	Highcharts.chart('container', {
-	  chart: {
-	    type: 'pie'
-	  },
-	  title: {
-	    text: null
-	  },
-	  subtitle: {
-	    text: null
-	  },
-	  plotOptions: {
-	    pie: {
-	      shadow: false,
-	      center: ['50%', '50%'],
-	      startAngle: -90
-	    }
-	  },
-	  tooltip: {
-	    valueSuffix: '%'
-	  },
-	  series: [{
-	    name: 'Percentage',
-	    data: salaryData,
-	    size: '60%',
-	    dataLabels: {
-	      formatter: function () {
-	        return this.y > 5 ? this.point.name : null;
-	      },
-	      color: '#ffffff',
-	      distance: -30
-	    }
-	  }, {
-	    name: 'Percentage',
-	    data: percentageData,
-	    size: '80%',
-	    innerSize: '60%',
-	    dataLabels: {
-	      formatter: function () {
-	        // display only if larger than 1
-	        return this.y > 1 ? '<b>' + this.point.name + '</b> ': null;
-	      }
+	    chart: {
+	        plotBackgroundColor: null,
+	        plotBorderWidth: null,
+	        plotShadow: false,
+	        type: 'pie'
 	    },
-	    id: 'percentages'
-	  }],
-	  responsive: {
-	    rules: [{
-	      condition: {
-	        maxWidth: 400
-	      },
-	      chartOptions: {
-	        series: [{
-	        }, {
-	          id: 'percentages',
-	          dataLabels: {
-	            enabled: false
-	          }
-	        }]
-	      }
+	    title: {
+	        text: ''
+	    },
+	    tooltip: {
+	        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+	    },
+	    accessibility: {
+	        point: {
+	            valueSuffix: '%'
+	        }
+	    },
+	    plotOptions: {
+	        pie: {
+	            allowPointSelect: true,
+	            cursor: 'pointer',
+	            dataLabels: {
+	                enabled: true,
+	                format: '<b>{point.name}</b>: {point.percentage:.2f} %'
+	            }
+	        }
+	    },
+	    series: [{
+	        name: 'Macronutriente',
+	        colorByPoint: true,
+	        data: 
+	        	[
+			        {
+			            name: 'Proteína',
+			            y: parseFloat(porcentajeProteinas)
+			        }, {
+			            name: 'Grasas',
+			            y: parseFloat(porcentajeGrasas)
+			        }, {
+			            name: 'Hidratos de Carbono',
+			            y: parseFloat(porcentajeHC)
+			        }, {
+			            name: 'Fibra',
+			            y: parseFloat(porcentajeFibra)
+			        }, {
+			            name: 'Sal',
+			            y: parseFloat(porcentajeSal)
+			        }
+	        	]
 	    }]
-	  }
 	});
 	</script>
-	
 
 	<!-- //smooth-scrolling-of-move-up -->  		
 	<!-- Bootstrap core JavaScript

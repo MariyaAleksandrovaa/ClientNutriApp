@@ -80,21 +80,25 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 			  
 			  </ol>
 			</nav>
-			<div class ="row">
-				<table class="table" style = "margin-top:30px;width: 40%;margin-left: 30%;">
-				  <thead>
-				    <tr >
-					  <th scope="col">Nombre alérgeno</th>
-				      <th scope="col">Descripción alérgeno</th>
-				    </tr>
-				  </thead>
-				  <tbody id="myTable">
-				    <tr th:each="alergenMenu: ${mapAlergensMenu}">
-	                    <td th:text="${alergenMenu.key}">Nombre alérgeno</td>
-	                    <td th:text="${alergenMenu.value}">Descripción alérgeno</td>
-				    </tr>
-				  </tbody>
-				</table>
+			<div th:if="${!mapAlergensMenu.empty}">
+				<div class ="row">
+					<table class="table" style = "margin-top:30px;width: 40%;margin-left: 30%;">
+					  <thead>
+					    <tr >
+						  <th scope="col">Nombre alérgeno</th>
+					      <th scope="col">Descripción alérgeno</th>
+					    </tr>
+					  </thead>
+					  <tbody id="myTable">
+					    <tr th:each="alergenMenu: ${mapAlergensMenu}">
+		                    <td th:text="${alergenMenu.key}">Nombre alérgeno</td>
+		                    <td th:text="${alergenMenu.value}">Descripción alérgeno</td>
+					    </tr>
+					  </tbody>
+					</table>
+				</div>
+			</div>
+			<div th:if="${mapAlergensMenu.empty}" style="font-size:15px;margin-top:70px;display:flex;justify-content:center;">Este plato no contiene alérgenos
 			</div>
 		</div>
 	</div>

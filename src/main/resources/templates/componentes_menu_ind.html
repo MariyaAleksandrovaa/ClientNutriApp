@@ -33,11 +33,59 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
 <!-- //js -->
 
+
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<style>
+.highcharts-figure,
+.highcharts-data-table table {
+    min-width: 320px;
+    max-width: 800px;
+    margin: 1em auto;
+}
 
-<!-- web-fonts -->   
+.highcharts-data-table table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid #ebebeb;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+
+.highcharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+}
+
+.highcharts-data-table th {
+    font-weight: 600;
+    padding: 0.5em;
+}
+
+.highcharts-data-table td,
+.highcharts-data-table th,
+.highcharts-data-table caption {
+    padding: 0.5em;
+}
+
+.highcharts-data-table thead tr,
+.highcharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+
+.highcharts-data-table tr:hover {
+    background: #f1f7ff;
+}
+
+input[type="number"] {
+    min-width: 50px;
+}
+</style>
 <link href="//fonts.googleapis.com/css?family=Playfair+Display:400,400i,700,700i,900,900i" rel="stylesheet">
 <!-- //web-fonts -->
 </head>
@@ -62,8 +110,6 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		</div>
 		<!-- //banner-text -->
 	</div>
-	<!-- //banner -->   
-	<!-- gallery -->
 	<div class="about gallery">
 		<div class="container">  
 				<nav aria-label="breadcrumb">
@@ -82,180 +128,121 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 				  
 				  </ol>
 				</nav>
-				<label for="exampleInputEmail1" th:text="${menuName}" style="font-size: 2em;margin-bottom: 40px;margin-top: 30px;"></label>
+				
+				<label for="exampleInputEmail1" th:text="${menuName}" style="font-size: 2em;margin-bottom: 40px;"></label>
+				<label for="exampleInputEmail1" th:text="${dishName}" style="font-size: 2em;margin-bottom: 40px;"></label>
 				
 				<ul class="nav nav-tabs" role="tablist" id="myTab">
 				  <li role ="presentation"  class="nav-item" >
 				    <a href="#seccion1" data-toggle="tab" role="tab" class="nav-link active">Gráfico</a>
 				  </li>
 				  <li role ="presentation" class="nav-item">
-				  	<a href="#seccion2" data-toggle="tab" role="tab"class="nav-link">Componentes alimenticios por categorías</a>
+				  	<a href="#seccion2" data-toggle="tab" role="tab"class="nav-link">Etiqueta alimentaria</a>
 				  </li>
 				  <li role ="presentation" class="nav-item">
-				  	<a href="#seccion3" data-toggle="tab" role="tab"class="nav-link">Tabla de componentes alimenticios</a>
+				  	<a href="#seccion3" data-toggle="tab" role="tab"class="nav-link">Tabla nutricional</a>
 				  </li>
 				</ul>	
 				<div class="tab-content">
 					<div role="tabpanel" class="tab-pane active" id="seccion1">
-						<label for="exampleInputEmail1" th:text="${name_menu}" style="font-size: 2em;margin-bottom: 30px;margin-top: 0px;"></label>
-					    <div id="container" style="margin-bottom:40px;"></div>
+						<label for="exampleInputEmail1" th:text="${name_menu}" style="font-size: 2em;margin-bottom: 30px;margin-top: 30px;"></label>
 					    
-<!-- 						<b th:text="'Energía:   ' + ${porcentajeEnergia} + '%' " style="margin-left:20px;color:#00b347;font-size:1.5em;"> </b> -->
-						<b th:text="'Hidratos de carbono:   ' + ${porcentajeHC} + '%' " style="margin-left:20px;color:#964B00;font-size:1.5em;"> </b>
-						<b th:text="'Proteínas:   ' + ${porcentajeProteinas} + '%' " style="margin-left:20px;color:#4169E1;font-size:1.5em;"> </b>
-						<b th:text="'Grasas:   ' + ${porcentajeGrasa} + '%' " style="margin-left:20px;color:#8A2BE2;font-size:1.5em;"> </b>
-					
+					    	<div id="container" style="margin-bottom:40px;"></div>
+					    
+<!-- 							<b th:text="'Hidratos de carbono:   ' + ${porcentajeHC} + '%' " style="margin-left:20px;color:#964B00;font-size:1.5em;"> </b> -->
+<!-- 							<b th:text="'Proteínas:   ' + ${porcentajeProteinas} + '%' " style="margin-left:20px;color:#4169E1;font-size:1.5em;"> </b> -->
+<!-- 							<b th:text="'Grasas:   ' + ${porcentajeGrasa} + '%' " style="margin-left:20px;color:#8A2BE2;font-size:1.5em;"> </b> -->
+						<h4 style="margin-top: 30px;">Se recomienda una dieta variada y equilibrada y un estilo de vida saludable.</h4>
 					</div>
 					<div role="tabpanel" class="tab-pane " id="seccion2">
-						<label for="exampleInputEmail1" th:text="${name_menu}" style="font-size: 2em;margin-bottom: 30px;margin-top: 0px;"></label>
-						
-						
-						<div class ="row">
-							<h4 style="margin-top:0px;font-size:1.8em;margin-bottom:20px;">Proximales</h4>
-							<table class="table" style = "margin-top:0px;background-color:#9DC4E0;">
+						<label for="exampleInputEmail1" th:text="${name_menu}" style="font-size: 2em;margin-bottom: 30px;margin-top: 30px;"></label>
+								<div class ="row" style="display:flex;justify-content:center;padding:0px 250px 0px 250px;margin-top:-60px;">
+		<!-- 							<div style="width:40%;display:flex;justify-content:center;"> -->
+										<table class="table" style = "margin-top:30px;">
+											
+										  <thead>
+										    <tr >
+										      <th scope="col">Nombre componente</th>
+										      <th scope="col" style="width:30%;">Cantidad </th>
+										      <th scope="col" style="width: 30%;">Ingesta de referencia*</th>
+										    </tr>
+										  </thead>
+										<tbody id="completeTable">
+											<tr th:each="componente: ${listComponentsDish}">
+												<td th:text="${componente.component}" style="font-weight:700;">Grupo componente</td>
+												<td th:text="${componente.amount}" style="width: 30%;">Nombre componente</td>
+												<td th:text="${componente.recomendedAmount}" style="width: 30%;">Ingesta de referencia</td>
+											</tr>
+										</tbody>
+										</table>
+								</div>
 								
-							  <thead>
-							    <tr >
-								  <th scope="col">Grupo componente</th>
-							      <th scope="col">Nombre componente</th>
-							      <th scope="col">Cantidad </th>
-							      <th scope="col">Unidad</th>
-							    </tr>
-							  </thead>
-							  <tbody id="myTable">
-							    <tr th:each="componente: ${componentsDishTableProximal}">
-				                    <td th:text="${componente.groupComponent}">Grupo componente</td>
-				                    <td th:text="${componente.nameComponent}">Nombre componente</td>
-				                    <td th:text="${componente.amount}">Cantidad</td>
-				                    <td th:text="${componente.unit}">Unidad</td>
-							    </tr>
-							  </tbody>
-							</table>
-						</div>		
-						
-						<div class ="row">
-						<h4 style="margin-top:20px;font-size:1.8em;margin-bottom:20px;">Hidratos de carbono</h4>
-							<table class="table" style = "margin-top:0px;background-color:#FAB8AA;">
+								<h4 style="margin-top: 30px;">* Ingesta de referencia de un
+									adulto medio (8 400 kJ/ 2 000 kcal)</h4>
+								<h4 style="margin-top: 30px;">Estas ingestas de referencia están recogidas
+									en el Reglamento 1169/2011 DEL PARLAMENTO EUROPEO Y DEL CONSEJO de
+									25 de octubre de 2011 sobre la información alimentaria facilitada
+									al consumidor.</h4>
+								<h4 style="margin-top: 30px;">** Dato obtenido de EFSA (Autoridad Europea de Seguridad Alimentaria)</h4>
 								
-							  <thead>
-							    <tr >
-								  <th scope="col">Grupo componente</th>
-							      <th scope="col">Nombre componente</th>
-							      <th scope="col">Cantidad </th>
-							      <th scope="col">Unidad</th>
-							    </tr>
-							  </thead>
-							  <tbody id="myTable">
-							    <tr th:each="componente: ${componentsDishTableHcarbono}">
-				                    <td th:text="${componente.groupComponent}">Grupo componente</td>
-				                    <td th:text="${componente.nameComponent}">Nombre componente</td>
-				                    <td th:text="${componente.amount}">Cantidad</td>
-				                    <td th:text="${componente.unit}">Unidad</td>
-							    </tr>
-							  </tbody>
-							</table>
-						</div>
-						
-						<div class ="row">
-						<h4 style="margin-top:20px;font-size:1.8em;margin-bottom:20px;">Grasas</h4>
-							<table class="table" style = "margin-top:0px;background-color:#FADB44;">
-								
-							  <thead>
-							    <tr >
-								  <th scope="col">Grupo componente</th>
-							      <th scope="col">Nombre componente</th>
-							      <th scope="col">Cantidad </th>
-							      <th scope="col">Unidad</th>
-							    </tr>
-							  </thead>
-							  <tbody id="myTable">
-							    <tr th:each="componente: ${componentsDishTableGrasa}">
-				                    <td th:text="${componente.groupComponent}">Grupo componente</td>
-				                    <td th:text="${componente.nameComponent}">Nombre componente</td>
-				                    <td th:text="${componente.amount}">Cantidad</td>
-				                    <td th:text="${componente.unit}">Unidad</td>
-							    </tr>
-							  </tbody>
-							</table>
-						</div>
-						
-						<div class ="row">
-						<h4 style="margin-top:20px;font-size:1.8em;margin-bottom:20px;">Vitaminas</h4>
-							<table class="table" style = "margin-top:0px;background-color:#95F59A;">
-								
-							  <thead>
-							    <tr >
-								  <th scope="col">Grupo componente</th>
-							      <th scope="col">Nombre componente</th>
-							      <th scope="col">Cantidad </th>
-							      <th scope="col">Unidad</th>
-							    </tr>
-							  </thead>
-							  <tbody id="myTable">
-							    <tr th:each="componente: ${componentsDishTableVitaminas}">
-				                    <td th:text="${componente.groupComponent}">Grupo componente</td>
-				                    <td th:text="${componente.nameComponent}">Nombre componente</td>
-				                    <td th:text="${componente.amount}">Cantidad</td>
-				                    <td th:text="${componente.unit}">Unidad</td>
-							    </tr>
-							  </tbody>
-							</table>
-						</div>
-						
-						<div class ="row">
-						<h4 style="margin-top:20px;font-size:1.8em;margin-bottom:20px;">Minerales</h4>
-							<table class="table" style = "margin-top:30px;background-color:#F1C7FF;">
-								
-							  <thead>
-							    <tr >
-								  <th scope="col">Grupo componente</th>
-							      <th scope="col">Nombre componente</th>
-							      <th scope="col">Cantidad </th>
-							      <th scope="col">Unidad</th>
-							    </tr>
-							  </thead>
-							  <tbody id="myTable">
-							    <tr th:each="componente: ${componentsDishTableMinerales}">
-				                    <td th:text="${componente.groupComponent}">Grupo componente</td>
-				                    <td th:text="${componente.nameComponent}">Nombre componente</td>
-				                    <td th:text="${componente.amount}">Cantidad</td>
-				                    <td th:text="${componente.unit}">Unidad</td>
-							    </tr>
-							  </tbody>
-							</table>
-						</div>
 					</div>
 					<div role="tabpanel" class="tab-pane " id="seccion3">
-						<label for="exampleInputEmail1" th:text="${name_menu}" style="font-size: 2em;margin-bottom: 30px;margin-top: 0px;"></label>
-					
-						<div class ="row">
-							<table class="table" style = "margin-top:0px">
-								
-							  <thead>
-							    <tr >
-								  <th scope="col">Grupo componente</th>
-							      <th scope="col">Nombre componente</th>
-							      <th scope="col">Cantidad </th>
-							      <th scope="col">Unidad</th>
-							    </tr>
-							  </thead>
-							  <tbody id="completeTable">
-							    <tr th:each="componente: ${listComponentsDish}">
-				                    <td th:text="${componente.groupComponent}">Grupo componente</td>
-				                    <td th:text="${componente.nameComponent}">Nombre componente</td>
-				                    <td th:text="${componente.amount}">Cantidad</td>
-				                    <td th:text="${componente.unit}">Unidad</td>
-							    </tr>
-							  </tbody>
-							</table>
+						<label for="exampleInputEmail1" th:text="${name_menu}" style="font-size: 2em;margin-bottom: 30px;margin-top: 30px;"></label>
+	
+						<div th:if="${!componentsDishTableVitaminas.empty}">
+							<div class ="row">
+							<h4 style="margin-top:20px;">Vitaminas</h4>
+								<table class="table" style = "margin-top:30px;background-color:#95F59A;">
+									
+								  <thead>
+								    <tr >
+									  <th scope="col" style="width:20%;">Grupo componente</th>
+								      <th scope="col" style="width:40%;">Nombre componente</th>
+								      <th scope="col" style="width:20%;">Cantidad </th>
+								      <th scope="col" style="width:20%;">Unidad</th>
+								    </tr>
+								  </thead>
+								  <tbody id="myTable">
+								    <tr th:each="componente: ${componentsDishTableVitaminas}">
+					                    <td th:text="${componente.groupComponent}">Grupo componente</td>
+					                    <td th:text="${componente.nameComponent}">Nombre componente</td>
+					                    <td th:text="${componente.amount}">Cantidad</td>
+					                    <td th:text="${componente.unit}">Unidad</td>
+								    </tr>
+								  </tbody>
+								</table>
+							</div>
+						</div>
+						<div th:if="${!componentsDishTableMinerales.empty}">
+							<div class ="row">
+							<h4 style="margin-top:20px;">Minerales</h4>
+								<table class="table" style = "margin-top:30px;background-color:#F1C7FF;">
+									
+								  <thead>
+								    <tr >
+									  <th scope="col" style="width:20%;">Grupo componente</th>
+								      <th scope="col" style="width:40%;">Nombre componente</th>
+								      <th scope="col" style="width:20%;">Cantidad </th>
+								      <th scope="col" style="width:20%;">Unidad</th>
+								    </tr>
+								  </thead>
+								  <tbody id="myTable">
+								    <tr th:each="componente: ${componentsDishTableMinerales}">
+					                    <td th:text="${componente.groupComponent}">Grupo componente</td>
+					                    <td th:text="${componente.nameComponent}">Nombre componente</td>
+					                    <td th:text="${componente.amount}">Cantidad</td>
+					                    <td th:text="${componente.unit}">Unidad</td>
+								    </tr>
+								  </tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 			</div>
 		</div>
 	</div>
 
-	<!-- //gallery -->  
-	<!-- footer -->
+
 	<div class="footer">
 		<div class="container">
 			<div class="clearfix"> </div>
@@ -462,187 +449,126 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	     $(this.parentNode).attr("style","background-color:"+color)
 	})
 	</script>
-	<script  th:inline="javascript">
-
-	/*<![CDATA[*/
+	<script>
+	$("#completeTable td:nth-child(1)").each( function(x){
+	     const texto = this.innerHTML;
+	     switch(texto) {
+	        case "Proximales":
+	           color = "#9DC4E0" ;
+	           break;
+	        case "Grasas":
+		           color = "#FADB44" ;
+		           break;
+	        case "Colesterol":
+		           color = "#FADB44" ;
+		           break;
+	        case "Grasas saturadas":
+		           color = "#FADB44" ;
+		           break;
+	        case "Grasas monoinsaturada":
+		           color = "#FADB44" ;
+		           break;
+	        case "Grasas trans":
+		           color = "#FADB44" ;
+		           break;		
+	        case "Grasas poliinsaturada":
+		           color = "#FADB44" ;
+		           break;
+		           
+	        case "de las cuales saturadas":
+		           color = "#FADB44" ;
+		           break;
+	        case "Valor energético":
+		           color = "#E0E0E0" ;
+		           break;		
+	        case "Fibra":
+		           color = "#CCFF99" ;
+		           break;			           
+	        case "Hidratos de Carbono":
+		           color = "#FAB8AA" ;
+		           break;
+	        case "de los cuales azúcares":
+		           color = "#F1C7FF" ;
+		           break;		   
+	        case "Proteínas":
+		           color = "#99CCFF" ;
+		           break;			           
+	        case "Vitaminas":
+		           color = "#95F59A" ;
+		           break;
+	        case "Minerales":
+		           color = "#F1C7FF" ;
+		           break;  
+	        case "Sal":
+		           color = "#FCE4CA" ;
+		           break;  		
+		    default:
+		    		color ="#ffffff"
+	     }
+	     $(this.parentNode).attr("style","background-color:"+color)
+	})
+	</script>
+	<script type="text/javascript">
 	
-	    var porcentajeProteinas = /*[[${porcentajeProteinas}]]*/ 'default';
-// 		var porcentajeEnergia = /*[[${porcentajeEnergia}]]*/ 'default';
-		var porcentajeHC = /*[[${porcentajeHC}]]*/ 'default';
-		var porcentajeGrasa = /*[[${porcentajeGrasa}]]*/ 'default';
-		
-		var porcentajeOtrosHC= /*[[${porcentajeOtrosHC}]]*/ 'default';
-		var porcentajeFibra = /*[[${porcentajeFibra}]]*/ 'default';
-		var porcentajeAzucar = /*[[${porcentajeAzucar}]]*/ 'default';
-		
-		var porcentajeAcGrasos = /*[[${porcentajeAcGrasos}]]*/ 'default';
-		var porcentajeOtrasGrasas = /*[[${porcentajeOtrasGrasas}]]*/ 'default';
-	
-	/*]]>*/
-	var colors = Highcharts.getOptions().colors,
-	  categories = [
-// 	    'Energía',
-	    'Grasas',
-	    'Proteína',
-	    'Hidratos de Carbono'
-	  ],
-	  data = [
-// 	    {
-// 	      y: porcentajeEnergia,
-// 	      color:  colors[2],
-// 	      drilldown: {
-// 	        name: 'Energía',
-// 	        categories: [
-// 	          'Energía'
-// 	        ],
-// 	        data: [
-// 	        	porcentajeEnergia
-// 	        ]
-// 	      }
-// 	    },
-	    {
-	      y: porcentajeGrasa,
-	      color: colors[4],
-	      drilldown: {
-	        name: 'Grasas',
-	        categories: [
-		          'Ácidos grasos',
-		          'Otras grasas'
-	        ],
-	        data: [
-	        	porcentajeAcGrasos,
-	        	porcentajeOtrasGrasas
-	          
-	        ]
-	      }
-	    },
-	    {
-	      y: porcentajeProteinas,
-	      color: colors[0],
-	      drilldown: {
-	        name: 'Proteína',
-	        categories: [
-	          'Proteína'
-	        ],
-	        data: [
-	        	porcentajeProteinas
-	        ]
-	      }
-	    },
-	    {
-	      y: porcentajeHC,
-	      color: colors[3],
-	      drilldown: {
-	        name: 'Hidratos de Carbono',
-	        categories: [
-	          'Fibra',
-	          'Azúcares',
-	          'Otros Hidratos de Carbono'
-	        ],
-	        data: [
-	        	porcentajeFibra,
-	        	porcentajeAzucar,
-	        	porcentajeOtrosHC
-	        ]
-	      }
-		    }
-	  ],
-	  salaryData = [],
-	  percentageData = [],
-	  i,
-	  j,
-	  dataLen = data.length,
-	  drillDataLen,
-	  brightness;
+	var porcentajeProteinas = "[[${porcentajeProteinas}]]";
+	var porcentajeHC = "[[${porcentajeHC}]]";
+	var porcentajeFibra = "[[${porcentajeFibra}]]";
+	var porcentajeGrasas = "[[${porcentajeGrasas}]]";
+	var porcentajeSal = "[[${porcentajeSal}]]";
 
-
-	// Build the data arrays
-	for (i = 0; i < dataLen; i += 1) {
-
-	  // add browser data
-	  salaryData.push({
-	    name: categories[i],
-	    y: data[i].y,
-	    color: data[i].color
-	  });
-
-	  // add percentage data
-	  drillDataLen = data[i].drilldown.data.length;
-	  for (j = 0; j < drillDataLen; j += 1) {
-	    brightness = 0.2 - (j / drillDataLen) / 5;
-	    percentageData.push({
-	      name: data[i].drilldown.categories[j],
-	      y: data[i].drilldown.data[j],
-	      color: Highcharts.color(data[i].color).brighten(brightness).get()
-	    });
-	  }
-	}
-
-	// Create the chart
 	Highcharts.chart('container', {
-	  chart: {
-	    type: 'pie'
-	  },
-	  title: {
-	    text: null
-	  },
-	  subtitle: {
-	    text: null
-	  },
-	  plotOptions: {
-	    pie: {
-	      shadow: false,
-	      center: ['50%', '50%'],
-	      startAngle: -90
-	    }
-	  },
-	  tooltip: {
-	    valueSuffix: '%'
-	  },
-	  series: [{
-	    name: 'Percentage',
-	    data: salaryData,
-	    size: '60%',
-	    dataLabels: {
-	      formatter: function () {
-	        return this.y > 5 ? this.point.name : null;
-	      },
-	      color: '#ffffff',
-	      distance: -30
-	    }
-	  }, {
-	    name: 'Percentage',
-	    data: percentageData,
-	    size: '80%',
-	    innerSize: '60%',
-	    dataLabels: {
-	      formatter: function () {
-	        // display only if larger than 1
-	        return this.y > 1 ? '<b>' + this.point.name + '</b> ': null;
-	      }
+	    chart: {
+	        plotBackgroundColor: null,
+	        plotBorderWidth: null,
+	        plotShadow: false,
+	        type: 'pie'
 	    },
-	    id: 'percentages'
-	  }],
-	  responsive: {
-	    rules: [{
-	      condition: {
-	        maxWidth: 400
-	      },
-	      chartOptions: {
-	        series: [{
-	        }, {
-	          id: 'percentages',
-	          dataLabels: {
-	            enabled: false
-	          }
-	        }]
-	      }
+	    title: {
+	        text: ''
+	    },
+	    tooltip: {
+	        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+	    },
+	    accessibility: {
+	        point: {
+	            valueSuffix: '%'
+	        }
+	    },
+	    plotOptions: {
+	        pie: {
+	            allowPointSelect: true,
+	            cursor: 'pointer',
+	            dataLabels: {
+	                enabled: true,
+	                format: '<b>{point.name}</b>: {point.percentage:.2f} %'
+	            }
+	        }
+	    },
+	    series: [{
+	        name: 'Macronutriente',
+	        colorByPoint: true,
+	        data: 
+	        	[
+			        {
+			            name: 'Proteína',
+			            y: parseFloat(porcentajeProteinas)
+			        }, {
+			            name: 'Grasas',
+			            y: parseFloat(porcentajeGrasas)
+			        }, {
+			            name: 'Hidratos de Carbono',
+			            y: parseFloat(porcentajeHC)
+			        }, {
+			            name: 'Fibra',
+			            y: parseFloat(porcentajeFibra)
+			        }, {
+			            name: 'Sal',
+			            y: parseFloat(porcentajeSal)
+			        }
+	        	]
 	    }]
-	  }
 	});
 	</script>
-	
-
 	<!-- //smooth-scrolling-of-move-up -->  		
 	<!-- Bootstrap core JavaScript
     ================================================== -->
