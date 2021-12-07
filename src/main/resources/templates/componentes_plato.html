@@ -24,7 +24,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 
 <link href="../../../../css/style.css" type="text/css" rel="stylesheet" media="all">   
 <link href="../../../../css/font-awesome.css" rel="stylesheet"> <!-- font-awesome icons --> 
-<link rel="stylesheet" href="../../css/smoothbox.css" type='text/css' media="all" /> 
+<link rel="stylesheet" href="../../../../css/smoothbox.css" type='text/css' media="all" /> 
 <!-- //Custom Theme files --> 
 
 <!-- js -->
@@ -32,11 +32,12 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
 <!-- //js -->
-
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <!-- web-fonts -->   
 <link href="//fonts.googleapis.com/css?family=Playfair+Display:400,400i,700,700i,900,900i" rel="stylesheet">
-
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
@@ -141,96 +142,62 @@ input[type="number"] {
 				    <a href="#seccion1" data-toggle="tab" role="tab" class="nav-link active">Gráfico</a>
 				  </li>
 				  <li role ="presentation" class="nav-item">
-				  	<a href="#seccion2" data-toggle="tab" role="tab"class="nav-link">Componentes alimenticios por categorías</a>
+				  	<a href="#seccion2" data-toggle="tab" role="tab"class="nav-link">Etiqueta
+						alimentaria</a>
 				  </li>
 				  <li role ="presentation" class="nav-item">
-				  	<a href="#seccion3" data-toggle="tab" role="tab"class="nav-link">Tabla de componentes alimenticios</a>
+				  	<a href="#seccion3" data-toggle="tab" role="tab"class="nav-link">Vitaminas y
+						minerales</a>
 				  </li>
 				</ul>	
 				<div class="tab-content">
 					<div role="tabpanel" class="tab-pane active" id="seccion1">
-						<label for="exampleInputEmail1" th:text="${name_menu}" style="font-size: 2em;margin-bottom: 30px;margin-top: 0px;"></label>
+						<h3 style="font-weight: 700;margin-bottom:50px;margin-top:30px;">Porcentajes sobre el total de energía</h3>
 					    <div id="container" style="margin-bottom:40px;"></div>
-					    
-<!-- 						<b th:text="'Energía:   ' + ${porcentajeEnergia} + '%' " style="margin-left:20px;color:#00b347;font-size:1.5em;"> </b> -->
-						<b th:text="'Hidratos de carbono:   ' + ${porcentajeHC} + '%' " style="margin-left:20px;color:#964B00;font-size:1.5em;"> </b>
-						<b th:text="'Proteínas:   ' + ${porcentajeProteinas} + '%' " style="margin-left:20px;color:#4169E1;font-size:1.5em;"> </b>
-						<b th:text="'Grasas:   ' + ${porcentajeGrasa} + '%' " style="margin-left:20px;color:#8A2BE2;font-size:1.5em;"> </b>
-					
+					    <figure class="highcharts-figure">
+					    	<div id="container"></div>
+						</figure>
+						<h4 style="margin-top: 30px;">Se recomienda una dieta variada y equilibrada y un estilo de vida saludable.</h4>
 					</div>
 					<div role="tabpanel" class="tab-pane " id="seccion2">
+						<div class="row"
+							style="display: flex; justify-content: center; padding: 0px 150px;">
+							<!-- 							<div style="width:40%;display:flex;justify-content:center;"> -->
+							<table class="table" style="margin-top: 30px;font-size:10px;">
+	
+								<thead>
+									<tr>
+										<th scope="col">Nombre componente</th>
+										<th scope="col" style="width: 30%;">Cantidad de la ración</th>
+										<th scope="col" style="width: 30%;">Ingesta de referencia*</th>
+									</tr>
+								</thead>
+								<tbody id="completeTable">
+									<tr th:each="componente: ${listComponentsDish}">
+										<td th:text="${componente.component}" style="font-weight:700;">Grupo componente</td>
+										<td th:text="${componente.amount}" style="width: 30%;">Nombre componente</td>
+										<td th:text="${componente.recomendedAmount}" style="width: 30%;">Ingesta de referencia</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						
+					
 						<label for="exampleInputEmail1" th:text="${name_menu}" style="font-size: 2em;margin-bottom: 30px;margin-top: 0px;"></label>
+						<h4 style="margin-top: 30px;">* Ingesta de referencia de un
+							adulto medio (8 400 kJ/ 2 000 kcal)</h4>
+						<h4 style="margin-top: 30px;">Estas ingestas de referencia están recogidas
+							en el Reglamento 1169/2011 DEL PARLAMENTO EUROPEO Y DEL CONSEJO de
+							25 de octubre de 2011 sobre la información alimentaria facilitada
+							al consumidor.</h4>
+						<h4 style="margin-top: 30px;">** Dato obtenido de EFSA (Autoridad Europea de Seguridad Alimentaria)</h4>
 						
 						
-						<div class ="row">
-							<h4 style="margin-top:0px;font-size:1.8em;margin-bottom:20px;">Proximales</h4>
-							<table class="table" style = "margin-top:0px;background-color:#9DC4E0;">
-								
-							  <thead>
-							    <tr >
-								  <th scope="col">Grupo componente</th>
-							      <th scope="col">Nombre componente</th>
-							      <th scope="col">Cantidad </th>
-							      <th scope="col">Unidad</th>
-							    </tr>
-							  </thead>
-							  <tbody id="myTable">
-							    <tr th:each="componente: ${componentsDishTableProximal}">
-				                    <td th:text="${componente.groupComponent}">Grupo componente</td>
-				                    <td th:text="${componente.nameComponent}">Nombre componente</td>
-				                    <td th:text="${componente.amount}">Cantidad</td>
-				                    <td th:text="${componente.unit}">Unidad</td>
-							    </tr>
-							  </tbody>
-							</table>
-						</div>		
-						
-						<div class ="row">
-						<h4 style="margin-top:20px;font-size:1.8em;margin-bottom:20px;">Hidratos de carbono</h4>
-							<table class="table" style = "margin-top:0px;background-color:#FAB8AA;">
-								
-							  <thead>
-							    <tr >
-								  <th scope="col">Grupo componente</th>
-							      <th scope="col">Nombre componente</th>
-							      <th scope="col">Cantidad </th>
-							      <th scope="col">Unidad</th>
-							    </tr>
-							  </thead>
-							  <tbody id="myTable">
-							    <tr th:each="componente: ${componentsDishTableHcarbono}">
-				                    <td th:text="${componente.groupComponent}">Grupo componente</td>
-				                    <td th:text="${componente.nameComponent}">Nombre componente</td>
-				                    <td th:text="${componente.amount}">Cantidad</td>
-				                    <td th:text="${componente.unit}">Unidad</td>
-							    </tr>
-							  </tbody>
-							</table>
-						</div>
-						
-						<div class ="row">
-						<h4 style="margin-top:20px;font-size:1.8em;margin-bottom:20px;">Grasas</h4>
-							<table class="table" style = "margin-top:0px;background-color:#FADB44;">
-								
-							  <thead>
-							    <tr >
-								  <th scope="col">Grupo componente</th>
-							      <th scope="col">Nombre componente</th>
-							      <th scope="col">Cantidad </th>
-							      <th scope="col">Unidad</th>
-							    </tr>
-							  </thead>
-							  <tbody id="myTable">
-							    <tr th:each="componente: ${componentsDishTableGrasa}">
-				                    <td th:text="${componente.groupComponent}">Grupo componente</td>
-				                    <td th:text="${componente.nameComponent}">Nombre componente</td>
-				                    <td th:text="${componente.amount}">Cantidad</td>
-				                    <td th:text="${componente.unit}">Unidad</td>
-							    </tr>
-							  </tbody>
-							</table>
-						</div>
-						
+
+					</div>
+					<div role="tabpanel" class="tab-pane " id="seccion3">
+						<label for="exampleInputEmail1" th:text="${name_menu}" style="font-size: 2em;margin-bottom: 30px;margin-top: 0px;"></label>
+
 						<div class ="row">
 						<h4 style="margin-top:20px;font-size:1.8em;margin-bottom:20px;">Vitaminas</h4>
 							<table class="table" style = "margin-top:0px;background-color:#95F59A;">
@@ -240,6 +207,7 @@ input[type="number"] {
 								  <th scope="col">Grupo componente</th>
 							      <th scope="col">Nombre componente</th>
 							      <th scope="col">Cantidad </th>
+							      <th scope="col" style="width: 20%;">Cantidad recomendada</th>
 							      <th scope="col">Unidad</th>
 							    </tr>
 							  </thead>
@@ -248,6 +216,7 @@ input[type="number"] {
 				                    <td th:text="${componente.groupComponent}">Grupo componente</td>
 				                    <td th:text="${componente.nameComponent}">Nombre componente</td>
 				                    <td th:text="${componente.amount}">Cantidad</td>
+				                    <td th:text="${componente.recomendedAmount}">Cantidad recomendada</td>
 				                    <td th:text="${componente.unit}">Unidad</td>
 							    </tr>
 							  </tbody>
@@ -263,6 +232,7 @@ input[type="number"] {
 								  <th scope="col">Grupo componente</th>
 							      <th scope="col">Nombre componente</th>
 							      <th scope="col">Cantidad </th>
+							      <th scope="col" style="width: 20%;">Cantidad recomendada</th>
 							      <th scope="col">Unidad</th>
 							    </tr>
 							  </thead>
@@ -271,43 +241,21 @@ input[type="number"] {
 				                    <td th:text="${componente.groupComponent}">Grupo componente</td>
 				                    <td th:text="${componente.nameComponent}">Nombre componente</td>
 				                    <td th:text="${componente.amount}">Cantidad</td>
+				                    <td th:text="${componente.recomendedAmount}">Cantidad recomendada</td>
 				                    <td th:text="${componente.unit}">Unidad</td>
 							    </tr>
 							  </tbody>
 							</table>
 						</div>
+
 					</div>
-					<div role="tabpanel" class="tab-pane " id="seccion3">
-						<label for="exampleInputEmail1" th:text="${name_menu}" style="font-size: 2em;margin-bottom: 30px;margin-top: 0px;"></label>
-					
-						<div class ="row">
-							<table class="table" style = "margin-top:0px">
-								
-							  <thead>
-							    <tr >
-								  <th scope="col">Grupo componente</th>
-							      <th scope="col">Nombre componente</th>
-							      <th scope="col">Cantidad </th>
-							      <th scope="col">Unidad</th>
-							    </tr>
-							  </thead>
-							  <tbody id="completeTable">
-							    <tr th:each="componente: ${listComponentsDish}">
-				                    <td th:text="${componente.groupComponent}">Grupo componente</td>
-				                    <td th:text="${componente.nameComponent}">Nombre componente</td>
-				                    <td th:text="${componente.amount}">Cantidad</td>
-				                    <td th:text="${componente.unit}">Unidad</td>
-							    </tr>
-							  </tbody>
-							</table>
-						</div>
-					</div>
+				
 			</div>
+				
+					
+
 		</div>
 	</div>
-
-	<!-- //gallery -->  
-	<!-- footer -->
 	<div class="footer">
 		<div class="container">
 			<div class="clearfix"> </div>
@@ -316,13 +264,6 @@ input[type="number"] {
 			</div>
 		</div>
 	</div>
-	<script>
-		$('.navicon').on('click', function (e) {
-		  e.preventDefault();
-		  $(this).toggleClass('navicon--active');
-		  $('.toggle').toggleClass('toggle--active');
-		});
-	</script> 
 	<script>
 	$(document).ready(function(){
 	    $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
@@ -348,146 +289,9 @@ input[type="number"] {
 	    $("a[href='" + anchor + "']").tab("show");
 	});
 	</script>
-	<!-- //menu-js -->
-	<!-- jarallax -->  
 	<script src="js/SmoothScroll.min.js"></script> 
 	<script src="js/jarallax.js"></script> 
-	<script type="text/javascript">
-		/* init Jarallax */
-		$('.jarallax').jarallax({
-			speed: 0.5,
-			imgWidth: 1366,
-			imgHeight: 768
-		})
-	</script>  
-	<!-- //jarallax --> 
-	<!-- start-smooth-scrolling --> 
-	<script type="text/javascript" src="js/move-top.js"></script>
-	<script type="text/javascript" src="js/easing.js"></script>	
-	<script type="text/javascript">
-			jQuery(document).ready(function($) {
-				$(".scroll").click(function(event){		
-					event.preventDefault();
-			
-			$('html,body').animate({scrollTop:$(this.hash).offset().top},1000);
-				});
-			});
-	</script>
-	<script>
-    var ctxP = document.getElementById("pieChart").getContext('2d');
-    var myPieChart = new Chart(ctxP, {
-      type: 'pie',
-      data: {
-        labels: ["Red", "Green", "Yellow", "Grey", "Dark Grey"],
-        datasets: [{
-          data: [300, 50, 100, 40, 120],
-          backgroundColor: ["#F7464A", "#46BFBD", "#FDB45C", "#949FB1", "#4D5360"],
-          hoverBackgroundColor: ["#FF5A5E", "#5AD3D1", "#FFC870", "#A8B3C5", "#616774"]
-        }]
-      },
-      options: {
-        responsive: true
-      }
-    });
-	</script>
-	<!-- //end-smooth-scrolling -->	 
-	<!-- smooth-scrolling-of-move-up -->
-	<script type="text/javascript">
-		$(document).ready(function() {
-			/*
-			var defaults = {
-				containerID: 'toTop', // fading element id
-				containerHoverID: 'toTopHover', // fading element hover id
-				scrollSpeed: 1200,
-				easingType: 'linear' 
-			};
-			*/
-			
-			$().UItoTop({ easingType: 'easeOutQuart' });
-			
-		});
-	</script>
-	<script>
-	$(document).ready(function(){
-	  $("#myInput").on("keyup", function() {
-	    var value = $(this).val().toLowerCase();
-	    $("#myTable tr").filter(function() {
-	      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-	    });
-	  });
-	});
-	</script>
-	<script>
-    $(document).ready(function(){
-        // Open modal on page load
-        $("#myModal").modal('show');
-        // Close modal on button click
-        $(".btn").click(function(){
-            $("#modal1").modal('hide');
-        });
-    });
-	</script>
-	<script>
-	$(function(){
-	    $('#orderModal').modal({
-	        keyboard: true,
-	        backdrop: "static",
-	        show:false,
-
-	    }).on('show', function(){ //subscribe to show method
-	          var getIdFromRow = $(event.target).closest('tr').data('id'); //get the id from tr
-	        //make your ajax call populate items or what even you need
-	        $(this).find('#orderDetails').html($('<b> Order Id selected: ' + getIdFromRow  + '</b>'))
-	    });
-	});
-	</script>
-	<script>
-	var globalModal = $('.global-modal');
-    $( ".btn-green-flat-trigger" ).on( "click", function(e) {
-      e.preventDefault();
-      $( globalModal ).toggleClass('global-modal-show');
-    });
-    $( ".overlay" ).on( "click", function() {
-      $( globalModal ).toggleClass('global-modal-show');
-    });
-    $( ".global-modal_close" ).on( "click", function() {
-      $( globalModal ).toggleClass('global-modal-show');
-    });
-    $(".mobile-close").on("click", function(){
-      $( globalModal ).toggleClass('global-modal-show');
-    });
-	</script>
-	<script>
-	$('#myTable').bootstrapTable({
-	    onClickRow: function (row, $element) {
-	        // row: the record corresponding to the clicked row, 
-	        // $element: the tr element.
-	        
-	        var address = [];
-	        $(this).closest('tr').find('td').not(':last').each(function() {
-	            var textval = $(this).text(); // this will be the text of each <td>
-	           address.push(textval);
-	       });
-	        alert(address.join('\n'));
-	    }
-	});
-	</script>
 		<script>
-	$('#completeTable').bootstrapTable({
-	    onClickRow: function (row, $element) {
-	        // row: the record corresponding to the clicked row, 
-	        // $element: the tr element.
-	        
-	        var address = [];
-	        $(this).closest('tr').find('td').not(':last').each(function() {
-	            var textval = $(this).text(); // this will be the text of each <td>
-	           address.push(textval);
-	       });
-	        alert(address.join('\n'));
-	    }
-	});
-	</script>
-	<script>
 	$("#completeTable td:nth-child(1)").each( function(x){
 	     const texto = this.innerHTML;
 	     switch(texto) {
@@ -526,7 +330,7 @@ input[type="number"] {
 		           color = "#FAB8AA" ;
 		           break;
 	        case "de los cuales azúcares":
-		           color = "#F1C7FF" ;
+		           color = "#FAB8AA" ;
 		           break;		   
 	        case "Proteínas":
 		           color = "#99CCFF" ;
@@ -536,10 +340,10 @@ input[type="number"] {
 		           break;
 	        case "Minerales":
 		           color = "#F1C7FF" ;
-		           break;  
+		           break; 
 	        case "Sal":
 		           color = "#FCE4CA" ;
-		           break;  		
+		           break;  		           
 		    default:
 		    		color ="#ffffff"
 	     }
@@ -607,12 +411,6 @@ input[type="number"] {
 	    }]
 	});
 	</script>
-
-	<!-- //smooth-scrolling-of-move-up -->  		
-	<!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/bootstrap.js"></script>
-
+    <script src="../../../../js/bootstrap.js"></script>
 </body>
 </html>
