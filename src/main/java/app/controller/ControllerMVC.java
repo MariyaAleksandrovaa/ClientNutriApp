@@ -258,7 +258,7 @@ public class ControllerMVC {
 		if (menuObj.getFirst_dish() != 0) {
 			Map<String, String> mapFirstDish = obtenerAlergenosPlato(menuObj.getFirst_dish());
 
-			for (var alergen : mapFirstDish.entrySet()) {
+			for (Entry<String, String> alergen : mapFirstDish.entrySet()) {
 				mapAlergensMenu.put(alergen.getKey(), alergen.getValue());
 			}
 
@@ -266,7 +266,7 @@ public class ControllerMVC {
 		if (menuObj.getSecond_dish() != 0) {
 			Map<String, String> mapSecondDish = obtenerAlergenosPlato(menuObj.getSecond_dish());
 
-			for (var alergen : mapSecondDish.entrySet()) {
+			for (Entry<String, String> alergen : mapSecondDish.entrySet()) {
 				mapAlergensMenu.put(alergen.getKey(), alergen.getValue());
 			}
 
@@ -274,7 +274,7 @@ public class ControllerMVC {
 		if (menuObj.getThird_dish() != 0) {
 			Map<String, String> mapThirdDish = obtenerAlergenosPlato(menuObj.getThird_dish());
 
-			for (var alergen : mapThirdDish.entrySet()) {
+			for (Entry<String, String> alergen : mapThirdDish.entrySet()) {
 				mapAlergensMenu.put(alergen.getKey(), alergen.getValue());
 			}
 
@@ -352,7 +352,7 @@ public class ControllerMVC {
 
 				Map<String, String> mapAlergensDish = obtenerAlergenosPlato(idPlato);
 
-				for (var alergenDish : mapAlergensDish.entrySet()) {
+				for (Entry<String, String> alergenDish : mapAlergensDish.entrySet()) {
 
 					mapAlergensMenu.put(alergenDish.getKey(), alergenDish.getValue());
 				}
