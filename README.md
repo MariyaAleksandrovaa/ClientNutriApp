@@ -4,6 +4,6 @@
 
 Aplicación web con la que se pueden obtener los informes nutricionales acerca de los menús generados con la aplicación NutritionalGenerator.
 
-Esta aplicación se ejecuta dentro del navegador en: localhost8081
+Esta aplicación se ejecuta dentro del navegador en: localhost:8081
 
 Comprobar previamente que el servicio de la base de datos está iniciado.
